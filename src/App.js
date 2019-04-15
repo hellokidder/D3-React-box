@@ -6,7 +6,7 @@ import './App.css';
 class App extends Component {
   render() {
     const Data = []
-    for (let i = 0; i < 100; i += 1){
+    for (let i = 0; i < 10; i += 1){
       const random = Math.floor(Math.random() * 100)
       Data.push(random)
     }
@@ -14,8 +14,8 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <LineChartD3  data={Data} />
         </header>
+        <LineChartD3  data={Data} />
       </div>
     );
   }
