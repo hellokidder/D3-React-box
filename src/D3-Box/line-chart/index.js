@@ -61,9 +61,7 @@ class LineChartD3 extends Component {
       })
       .on("mousemove", function (d) {
         const m = d3.mouse(this)
-        console.log("fffffffffffffffffffff", m[0], m[1], m[0] * ((data.length - 1) / pathwidth))
-        console.log((m[0]-padding.left)%(pathwidth/data.length))
-        tooltipLine.attr("transform", `translate(${padding.left+((m[0]-padding.left) * (data.length / pathwidth))*(pathwidth / data.length)},${padding.bottom})`)
+        tooltipLine.attr("transform", `translate(${padding.left + (pathwidth / (data.length - 1)) * Math.round( (m[0]-padding.left) / (pathwidth / (data.length-1)))},${padding.bottom})`)
       })
       .on("mouseout", function () {
         tooltipLine.style("opacity",0)
@@ -119,7 +117,7 @@ class LineChartD3 extends Component {
       .style("stroke", "#008ffa")
       .style("stroke-width", "2")
       .attr("d", lineGengeator(data))
-      .attr("transform", `translate(${padding.left + 1},${padding.top})`)
+      .attr("transform", `translate(${padding.left},${padding.top})`)
       .on("mousemove", function (d) {
         const m = d3.mouse(this)
         const datax = m[0] * (data.length / pathwidth)
