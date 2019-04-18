@@ -7,24 +7,26 @@ class LineChartD3 extends Component {
   }
   componentDidMount() {
     const { data } = this.props
-    console.log(data)
+    // console.log(data)
     const width = 1000
     const height = 500
     const padding = { top: 40, left: 40, right: 40, bottom: 40 }
     const pathwidth = width - padding.left - padding.right
     const pathheight = height - padding.top - padding.bottom
+    const color = ["#008ffa","#00c061","#ffcb3c"]
 
     // 放大器
     var scaleX = d3.scaleLinear()
-      .domain([0,data.length-1]).nice()
+      .domain([0,9]).nice()
       .range([0, pathwidth])
-
     var scaleY = d3.scaleLinear()
-      .domain([0,d3.max(data)]).nice()
+      .domain([0,100]).nice()
       .range([ pathheight,0])
 
+    // 线条生成器
     var lineGengeator = d3.line()
       .x(function (d, i) {
+        console.log(">>>>>>>>>>",d)
         return scaleX(i)
       })
       .y(function (d) {
@@ -43,7 +45,7 @@ class LineChartD3 extends Component {
       .style("height", "50px")
       .style("opacity",0)
 
-    d3.select("#line")
+    const svg = d3.select("#line")
       .append("svg")
       .attr("width", width)
       .attr("height", height)
@@ -111,12 +113,17 @@ class LineChartD3 extends Component {
 
 
     // 折线
-    d3.select("svg")
+    svg.selectAll("path.line")
+      .data(data)
+      .enter()
       .append("path")
       .style("fill", "none")
-      .style("stroke", "#008ffa")
+      .style("stroke", function(d,i){return color[i]})
       .style("stroke-width", "2")
-      .attr("d", lineGengeator(data))
+      .attr("d", function (d) {
+        console.log(d)
+        return lineGengeator(d)
+      })
       .attr("transform", `translate(${padding.left},${padding.top})`)
       .on("mousemove", function (d) {
         const m = d3.mouse(this)
