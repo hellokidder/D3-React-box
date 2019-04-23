@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import {testCsvData, csv2linedata, findMinMax} from '../utils/utils'
+import { Transform } from 'stream';
 
 
 class Line extends Component {
@@ -11,25 +12,26 @@ class Line extends Component {
     const padding = { top: 40, left: 45, right: 40, bottom: 40 }
     const pathwidth = width - padding.left - padding.right
     const pathheight = height - padding.top - padding.bottom
-    const color = ["#008ffa", "#00c061", "#ffcb3c","#EE2764","#223670"]
+    const color = ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"]
+    const {data} = this.props
 
-    const csvTest = testCsvData()
-    const csv = d3.csvParse(csvTest)
+    // const csvTest = testCsvData()
+    // const csv = d3.csvParse(csvTest)
 
-    const lineType = ["A", "B", "C", "PT"]
-    const X = "T"
+    // const lineType = ["A", "B", "C", "PT"]
+    // const X = "T"
 
-    const data = csv2linedata(csv,lineType,X)
-    console.log("data", data)
-    const yMinMax = findMinMax(csv, lineType)
-    const xMinMax = findMinMax(csv,["T"])
+    // const data = csv2linedata(csv,lineType,X)
+    // console.log("data", data)
+    // const yMinMax = findMinMax(csv, lineType)
+    // const xMinMax = findMinMax(csv,["T"])
 
     // 放大器
     var scaleX = d3.scaleLinear()
-      .domain([xMinMax.min,xMinMax.max]).nice()
+      .domain([0,9]).nice()
       .range([0, pathwidth])
     var scaleY = d3.scaleLinear()
-      .domain([yMinMax.min,yMinMax.max]).nice()
+      .domain([0,100]).nice()
       .range([ pathheight,0])
 
     // 线条生成器
@@ -57,18 +59,76 @@ class Line extends Component {
     const axisX = svg.append("g")
       .attr("transform", `translate(${padding.left},${height - padding.bottom})`)
       .call(x)
+
+    let line = {}
+
+    function drowCircle(linedata) {
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>.")
+      svg.selectAll("circle")
+        .data(linedata)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) {
+        console.log("cx",d)
+        })
+        .attr("cy", function(d) {
+          console.log("cy",d)
+        })
+        .attr("r", 6)
+        .attr("fill", "white")
+        .attr("stroke", "blue")
+        .attr("stroke-width", 1)
+
+    }
+
+    function drawLine(linedata, i) {
+      const linecolor = linedata.color?linedata.color:color[i]
+      line = svg.append("path")
+        .style("fill", "none")
+        .style("stroke", linecolor)
+        .style("stroke-width", "2")
+        .attr("d",  lineGengeator(linedata.data))
+        .attr("transform", `translate(${padding.left},${padding.top})`)
+
+      drowCircle(linedata)
+    }
+    function loopDrawLine(data) {
+      for (let i = 0; i < data.length; i += 1){
+        drawLine(data[i],i)
+      }
+    }
+    loopDrawLine(data)
     // 折线
-    svg.selectAll("path.line")
-    .data(data)
-    .enter()
-      .append("path")
-      .style("fill", "none")
-      .style("stroke", function(d,i){return d.color?d.color:color[i]})
-      .style("stroke-width", "2")
-      .attr("d", function (d) {
-        return lineGengeator(d.data)
-      })
-      .attr("transform", `translate(${padding.left},${padding.top})`)
+    // const line = svg.selectAll("path.line")
+    // .data(data)
+    // .enter()
+    //   .append("path")
+    //   .style("fill", "none")
+    //   .style("stroke", function(d,i){return d.color?d.color:color[i]})
+    //   .style("stroke-width", "2")
+    //   .attr("d", function (d) {
+    //     console.log("ssss",d)
+    //     return lineGengeator(d.data)
+    //   })
+    //   .attr("transform", `translate(${padding.left},${padding.top})`)
+
+    // const cl = line.select("g")
+    //   .data(data)
+    //   .enter()
+    //   .append("g")
+    //   // .enter()
+    //   .attr("transform", function (d) {
+    //     console.log("dd",d)
+    //     var cx = d.x;
+    //     var cy= d.y;
+    //     return "translate("+cy+","+cx+")";
+    //   });
+
+    // cl.append("circle")
+    // .attr("r",6)
+    // .attr("fill","white")
+    // .attr("stroke","blue")
+    // .attr("stroke-width",1);
 
     function axisColor(axis,path,g,text) {
       axis.select("path")

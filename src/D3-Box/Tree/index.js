@@ -33,14 +33,14 @@ class Tree extends Component {
 
   //初始化树状图，也就是传入数据,并得到绘制树基本数据
   var treeData = tree(hierarchyData);
-  console.log(treeData);
+  // console.log(treeData);
   //得到节点
   var nodes = treeData.descendants();
   var links = treeData.links();
 
   //输出节点和边
-  console.log(nodes);
-  console.log(links);
+  // console.log(nodes);
+  // console.log(links);
 
   //创建一个贝塞尔生成曲线生成器
   var Bézier_curve_generator = d3.linkHorizontal()
@@ -70,7 +70,8 @@ class Tree extends Component {
     .data(nodes)
     .enter()
     .append("g")
-    .attr("transform",function(d){
+    .attr("transform", function (d) {
+      // console.log(d)
       var cx = d.x;
       var cy= d.y;
       return "translate("+cy+","+cx+")";
