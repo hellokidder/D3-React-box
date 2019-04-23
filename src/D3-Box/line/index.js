@@ -1,67 +1,35 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import {testCsvData, csv2linedata, findMinMax} from '../utils/utils'
 
 
 class Line extends Component {
 
   componentDidMount() {
-    // const { data } = this.props
-    // console.log("data",data)
     const width = 1000
     const height = 500
-    const padding = { top: 40, left: 40, right: 40, bottom: 40 }
+    const padding = { top: 40, left: 45, right: 40, bottom: 40 }
     const pathwidth = width - padding.left - padding.right
     const pathheight = height - padding.top - padding.bottom
-    const color = ["#008ffa", "#00c061", "#ffcb3c"]
+    const color = ["#008ffa", "#00c061", "#ffcb3c","#EE2764","#223670"]
 
-    d3.dsv(",", "test.csv", function(d) {
-      console.log(d)
-    }).then(function(data) {
-      console.log(data);
-    });
-
-    const ff ="A,B,C,PT\n135141,-73313,123116,123264\n140661,-86497,145436,123264\n133301,-79905,145436,123456\n131461,-86497,123116,123360\n131461,-79905,130556,123360\n140661,-79905,145436,123072\n125941,-79905,130556,123360\n138821,-53537,123116,123456\n138821,-79905,130556,123456\n138821,-60129,130556,123264\n138821,-73313,130556,123360\n138821,-60129,145436,123360\n131461,-79905,123116,123360\n135141,-60129,123116,123360\n133301,-79905,123116,123264\n135141,-60129,152876,123456\n138821,-79905,123116,123360\n133301,-79905,130556,123360\n129621,-73313,115676,123360\n133301,-86497,152876,123456\n131461,-60129,145436,123360\n131461,-73313,130556,123264\n129621,-79905,123116,123264\n131461,-86497,123116,123360\n133301,-86497,115676,123360\n138821,-79905,130556,123264\n133301,-53537,130556,123072\n135141,-79905,145436,123264\n133301,-60129,145436,123360\n133301,-73313,130556,123360\n133301,-79905,145436,123264"
-
-    const csv = d3.csvParse(ff)
-    // console.log(csv)
+    const csvTest = testCsvData()
+    const csv = d3.csvParse(csvTest)
 
     const lineType = ["A", "B", "C", "PT"]
-    function csv2linedata(csv,lineType,X) {
-      const lineData = []
-      for (let i = 0; i < lineType.length; i += 1){
-        lineData[i] = {}
-        lineData[i].name = lineType[i]
-        lineData[i].data = []
-        if(X === undefined){
-          for (let n = 0; n < csv.length; n += 1)
-              lineData[i].data.push([n, csv[n][lineType[i]]])
-        }
-      }
-      return lineData
-    }
-    const data = csv2linedata(csv,lineType)
-    // console.log("data", data)
+    const X = "T"
 
-    function findMinMax(csv, lineType) {
-      const MinMax = [0,0]
-      console.log(csv)
-      for (let i = 0; i < csv.length; i += 1){
-        for (let n = 0; n < lineType.length; n += 1){
-          console.log(typeof(csv[i][lineType[n]]-0))
-          if(csv[i][lineType[n]]-0 < MinMax[0]) MinMax[0] = csv[i][lineType[n]]
-          if(csv[i][lineType[n]]-0 > MinMax[1]) MinMax[1] = csv[i][lineType[n]]
-        }
-      }
-      console.log(MinMax)
-      return MinMax
-    }
+    const data = csv2linedata(csv,lineType,X)
+    console.log("data", data)
     const yMinMax = findMinMax(csv, lineType)
+    const xMinMax = findMinMax(csv,["T"])
+
     // 放大器
     var scaleX = d3.scaleLinear()
-      .domain([0,csv.length-1]).nice()
+      .domain([xMinMax.min,xMinMax.max]).nice()
       .range([0, pathwidth])
     var scaleY = d3.scaleLinear()
-      .domain([yMinMax[0],yMinMax[1]]).nice()
+      .domain([yMinMax.min,yMinMax.max]).nice()
       .range([ pathheight,0])
 
     // 线条生成器
