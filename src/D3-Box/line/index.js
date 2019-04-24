@@ -143,6 +143,7 @@ class Line extends Component {
         .style("fill", "none")
         .style("stroke", lineColor)
         .style("stroke-width", "2")
+        .style("stroke-dasharray","5,5")
         .attr("d",  lineGengeator(linedata.data))
         .attr("transform", `translate(${padding.left},${padding.top})`)
       drowCircle(linedata,i)

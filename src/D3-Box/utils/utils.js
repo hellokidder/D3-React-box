@@ -25,42 +25,39 @@ export function csv2linedata(csv, lineType, X) {
   return lineData
 }
 
-// export function findMinMax(data) {
-//   console.log(data)
-//   const MinMax = {}
-//   for (let i = 0; i < data.length; i += 1){
-//     if (MinMax.min === undefined) {
-//       MinMax.min = data[i].data[0][0]
-//     }
-//   }
-//   console.log(MinMax)
-//   return MinMax
-// }
-// export function findMinMax(csv, typeprop) {
-//   let type = []
-//   const MinMax = {}
-//   if (typeprop !== undefined) {
-//     type = typeprop
-//   } else {
-//     for (var prop in csv[0]) {
-//       type.push(prop)
-//     }
-//   }
-//   for (let i = 0; i < csv.length; i += 1){
-//     for (let n = 0; n < type.length; n += 1){
-//       if (MinMax.min === undefined) {
-//         MinMax.min = csv[i][type[n]]-0
-//       }
-//       if (MinMax.max === undefined) {
-//         MinMax.max = csv[i][type[n]]-0
-//       }
-//       if(csv[i][type[n]]-0 < MinMax.min) MinMax.min = csv[i][type[n]]-0
-//       if(csv[i][type[n]]-0 > MinMax.max) MinMax.max = csv[i][type[n]]-0
-//     }
-//   }
-//   console.log(MinMax)
-//   return MinMax
-// }
+export function findMinMax(data, axis) {
+  console.log(data);
+  const minMax = {}
+
+  for (let i = 0; i < data.length; i += 1){
+    for (let n = 0; n < axis.Y.length; n += 1){
+      const num = data[i][axis.Y[n]]
+      if (minMax.min === undefined) {
+        minMax.min = num
+      }
+      if (minMax.max === undefined) {
+        minMax.max = num
+      }
+      if (minMax.min > num) minMax.min = num
+      if (minMax.max < num) minMax.max = num
+    }
+  }
+  return minMax
+}
+
+export function data2linedata(data,axisY) {
+  const lineData = []
+  for (let n = 0; n < axisY.length; n += 1){
+    const line = {}
+    line.name = axisY[n]
+    line.data = []
+    for (let i = 0; i < data.length; i += 1){
+      line.data.push(data[i][axisY[n]])
+    }
+    lineData.push(line)
+  }
+  return lineData
+}
 
 export function testCsvData() {
 
