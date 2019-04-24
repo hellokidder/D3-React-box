@@ -25,31 +25,42 @@ export function csv2linedata(csv, lineType, X) {
   return lineData
 }
 
-export function findMinMax(csv, typeprop) {
-  let type = []
-  const MinMax = {}
-  if (typeprop !== undefined) {
-    type = typeprop
-  } else {
-    for (var prop in csv[0]) {
-      type.push(prop)
-    }
-  }
-  for (let i = 0; i < csv.length; i += 1){
-    for (let n = 0; n < type.length; n += 1){
-      if (MinMax.min === undefined) {
-        MinMax.min = csv[i][type[n]]-0
-      }
-      if (MinMax.max === undefined) {
-        MinMax.max = csv[i][type[n]]-0
-      }
-      if(csv[i][type[n]]-0 < MinMax.min) MinMax.min = csv[i][type[n]]-0
-      if(csv[i][type[n]]-0 > MinMax.max) MinMax.max = csv[i][type[n]]-0
-    }
-  }
-  console.log(MinMax)
-  return MinMax
-}
+// export function findMinMax(data) {
+//   console.log(data)
+//   const MinMax = {}
+//   for (let i = 0; i < data.length; i += 1){
+//     if (MinMax.min === undefined) {
+//       MinMax.min = data[i].data[0][0]
+//     }
+//   }
+//   console.log(MinMax)
+//   return MinMax
+// }
+// export function findMinMax(csv, typeprop) {
+//   let type = []
+//   const MinMax = {}
+//   if (typeprop !== undefined) {
+//     type = typeprop
+//   } else {
+//     for (var prop in csv[0]) {
+//       type.push(prop)
+//     }
+//   }
+//   for (let i = 0; i < csv.length; i += 1){
+//     for (let n = 0; n < type.length; n += 1){
+//       if (MinMax.min === undefined) {
+//         MinMax.min = csv[i][type[n]]-0
+//       }
+//       if (MinMax.max === undefined) {
+//         MinMax.max = csv[i][type[n]]-0
+//       }
+//       if(csv[i][type[n]]-0 < MinMax.min) MinMax.min = csv[i][type[n]]-0
+//       if(csv[i][type[n]]-0 > MinMax.max) MinMax.max = csv[i][type[n]]-0
+//     }
+//   }
+//   console.log(MinMax)
+//   return MinMax
+// }
 
 export function testCsvData() {
 

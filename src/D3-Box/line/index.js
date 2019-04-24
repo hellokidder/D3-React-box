@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 // import {testCsvData, csv2linedata, findMinMax} from '../utils/utils'
+// import {findMinMax} from'../utils/utils'
 
 
 class Line extends Component {
@@ -13,6 +14,7 @@ class Line extends Component {
     const pathheight = height - padding.top - padding.bottom
     const color = ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"]
     const {data} = this.props
+    const dataLength = data[0].data.length
 
     // const csvTest = testCsvData()
     // const csv = d3.csvParse(csvTest)
@@ -22,7 +24,7 @@ class Line extends Component {
 
     // const data = csv2linedata(csv,lineType,X)
     // console.log("data", data)
-    // const yMinMax = findMinMax(csv, lineType)
+    // const yMinMax = findMinMax(data)
     // const xMinMax = findMinMax(csv,["T"])
 
     // 放大器
@@ -31,7 +33,11 @@ class Line extends Component {
       .range([0, pathwidth])
     var scaleY = d3.scaleLinear()
       .domain([0,100]).nice()
-      .range([ pathheight,0])
+      .range([pathheight, 0])
+
+    var　scaleXZ = d3.scaleLinear()
+    .domain([0,pathwidth])
+    .range([0, 9])
 
     // 线条生成器
     var lineGengeator = d3.line()
@@ -49,6 +55,47 @@ class Line extends Component {
       .append("svg")
         .attr("width", width)
       .attr("height", height)
+      .on("mouseover", function () {
+        tooltipLine.style("opacity",1)
+      })
+      .on("mousemove", function () {
+        const m = d3.mouse(this)
+        const a = Math.round((m[0] - padding.left) / (pathwidth / (dataLength - 1)))
+        const pathX = a * (pathwidth / (dataLength - 1))
+        // console.log(scaleXZ(pathX))
+        svg.selectAll("circle")
+          .attr("stroke-width", 1)
+        tooltip.select("#title")
+        .text(`${Math.round(scaleXZ(pathX))}`)
+
+        const aa = Math.round(scaleXZ(pathX))
+        for (let i = 0; i < data.length; i += 1){
+          svg.select(`#${data[i].name}${Math.round(scaleXZ(pathX))}`)
+            .attr("stroke-width", 2)
+          tooltip.select(`#${data[i].name}`)
+          .text(`${data[i].name}:${data[i].data[aa][1]}`)
+        }
+        tooltipLine.attr("transform", `translate(${padding.left + pathX},${padding.top})`)
+        if (m[0] > padding.left && m[0] < pathwidth + padding.left && m[1] > padding.top && m[1] < pathheight + padding.top) {
+          tooltip.style("visibility","visible")
+          if (m[0] > padding.left&& m[0]<pathwidth-60) {
+            tooltip.style("left",`${m[0]+60}px`)
+          } else {
+            tooltip.style("left",`${m[0]-60}px`)
+          }
+          if (m[1] > padding.top&& m[1]<pathheight-40) {
+            tooltip.style("top",`${m[1]+110}px`)
+          } else {
+            tooltip.style("top",`${m[1]}px`)
+          }
+        } else {
+          tooltip.style("visibility","hidden")
+        }
+      })
+      .on("mouseout", function () {
+        tooltipLine.style("opacity",0)
+      })
+
 
     // y轴
     const axisY = svg.append("g")
@@ -60,16 +107,24 @@ class Line extends Component {
       .call(x)
 
     let line = {}
+    const tooltip = this.tooltip(data)
+
+    const tooltipLine =  this.tooltipLine(pathheight)
 
     function drowCircle(linedata, i) {
       const circleColor = linedata.color?linedata.color:color[i]
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>",linedata)
       svg.selectAll(`circle${linedata.name}`)
         .data(linedata.data)
         .enter()
         .append("circle")
+        .attr("id", function (d) {
+          console.log(d,linedata.name)
+          return `${linedata.name}${d[0]}`
+        })
+        .attr("data", function (d) {
+            return d[1]
+          })
         .attr("cx", function (d) {
-          console.log("cx", d)
           return scaleX(d[0])
         })
         .attr("cy", function(d) {
@@ -80,7 +135,6 @@ class Line extends Component {
         .attr("stroke", "white")
         .attr("stroke-width", 1)
         .attr("transform", `translate(${padding.left},${padding.top})`);
-
     }
 
     function drawLine(linedata, i) {
@@ -99,54 +153,55 @@ class Line extends Component {
       }
     }
     loopDrawLine(data)
-    // 折线
-    // const line = svg.selectAll("path.line")
-    // .data(data)
-    // .enter()
-    //   .append("path")
-    //   .style("fill", "none")
-    //   .style("stroke", function(d,i){return d.color?d.color:color[i]})
-    //   .style("stroke-width", "2")
-    //   .attr("d", function (d) {
-    //     console.log("ssss",d)
-    //     return lineGengeator(d.data)
-    //   })
-    //   .attr("transform", `translate(${padding.left},${padding.top})`)
 
-    // const cl = line.select("g")
-    //   .data(data)
-    //   .enter()
-    //   .append("g")
-    //   // .enter()
-    //   .attr("transform", function (d) {
-    //     console.log("dd",d)
-    //     var cx = d.x;
-    //     var cy= d.y;
-    //     return "translate("+cy+","+cx+")";
-    //   });
-
-    // cl.append("circle")
-    // .attr("r",6)
-    // .attr("fill","white")
-    // .attr("stroke","blue")
-    // .attr("stroke-width",1);
-
-    function axisColor(axis,path,g,text) {
-      axis.select("path")
-      .attr("stroke", path)
-      .attr("stroke-width", "2")
-      axis.selectAll("g")
-      .select("line")
-      .attr("stroke", g)
-        .attr("stroke-width", "1")
-      axis.selectAll("g")
-      .select("text")
-      .attr("stroke", text)
-    }
-    axisColor(axisX, "#dddddd", "#dddddd","#dddddd")
-    axisColor(axisY,"white","#dddddd","#dddddd")
-
+    this.axisColor(axisX, "#dddddd", "#dddddd","#dddddd")
+    this.axisColor(axisY, "white", "#dddddd", "#dddddd")
   }
+
+  axisColor=(axis,path,g,text)　=> {
+    axis.select("path")
+    .attr("stroke", path)
+    .attr("stroke-width", "2")
+    axis.selectAll("g")
+    .select("line")
+    .attr("stroke", g)
+      .attr("stroke-width", "1")
+    axis.selectAll("g")
+    .select("text")
+    .attr("stroke", text)
+  }
+
+  tooltipLine = (pathheight) => {
+    const tooltipLine = d3.select("svg")
+    .append("path")
+    .style("fill", "none")
+    .style("stroke", "#dddddd")
+    .style("stroke-width", "1")
+    .attr("d", `M0,0L0,${pathheight}`)
+    .style("opacity",0)
+    return tooltipLine
+  }
+
+  tooltip = (data) => {
+    const tooltip = d3.select("#line")
+      .append("div")
+      .style("position", "absolute")
+      .style("background-color", "rgba(255, 255, 255, 0.9)")
+      .style("box-shadow", "rgb(174, 174, 174) 0px 0px 10px")
+      .style("width", " 80px")
+      .style("height", `${data.length*20+20}px`)
+      .style("visibility","hidden")
+        .style("opacity", 1)
+
+    tooltip.append("div")
+      .attr("id", "title")
+    for (let i = 0; i < data.length; i += 1){
+      tooltip.append("div")
+      .attr("id",`${data[i].name}`)
+    }
+    return tooltip
+  }
+
   render() {
     return (
       <div id = "line">
