@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import {testCsvData, csv2linedata, findMinMax} from '../utils/utils'
-import { Transform } from 'stream';
+// import {testCsvData, csv2linedata, findMinMax} from '../utils/utils'
 
 
 class Line extends Component {
@@ -49,7 +48,7 @@ class Line extends Component {
     const svg = d3.select("#line")
       .append("svg")
         .attr("width", width)
-        .attr("height", height)
+      .attr("height", height)
 
     // y轴
     const axisY = svg.append("g")
@@ -62,35 +61,37 @@ class Line extends Component {
 
     let line = {}
 
-    function drowCircle(linedata) {
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>.")
-      svg.selectAll("circle")
-        .data(linedata)
+    function drowCircle(linedata, i) {
+      const circleColor = linedata.color?linedata.color:color[i]
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>",linedata)
+      svg.selectAll(`circle${linedata.name}`)
+        .data(linedata.data)
         .enter()
         .append("circle")
         .attr("cx", function (d) {
-        console.log("cx",d)
+          console.log("cx", d)
+          return scaleX(d[0])
         })
         .attr("cy", function(d) {
-          console.log("cy",d)
+          return scaleY(d[1])
         })
-        .attr("r", 6)
-        .attr("fill", "white")
-        .attr("stroke", "blue")
+        .attr("r", 3)
+        .attr("fill", circleColor)
+        .attr("stroke", "white")
         .attr("stroke-width", 1)
+        .attr("transform", `translate(${padding.left},${padding.top})`);
 
     }
 
     function drawLine(linedata, i) {
-      const linecolor = linedata.color?linedata.color:color[i]
+      const lineColor = linedata.color?linedata.color:color[i]
       line = svg.append("path")
         .style("fill", "none")
-        .style("stroke", linecolor)
+        .style("stroke", lineColor)
         .style("stroke-width", "2")
         .attr("d",  lineGengeator(linedata.data))
         .attr("transform", `translate(${padding.left},${padding.top})`)
-
-      drowCircle(linedata)
+      drowCircle(linedata,i)
     }
     function loopDrawLine(data) {
       for (let i = 0; i < data.length; i += 1){
