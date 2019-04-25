@@ -1,3 +1,5 @@
+# Line
+
 ## data　必填
 
 data = [
@@ -16,3 +18,29 @@ axis = {
   X:""
   Y:[]
 }
+
+## layout
+
+ layout = {
+   width:
+   height:
+   padding:
+ }
+
+## line
+
+  line = [
+    {
+      name: "A"
+      dot: true/false
+      color: "#ffffff"
+    }
+  ]
+
+## dot
+
+  dot = {true}
+
+## tooltip={true}
+
+## tooltipline={true}

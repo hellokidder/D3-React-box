@@ -106,7 +106,6 @@ class Line extends Component {
       .attr("transform", `translate(${padding.left},${height - padding.bottom})`)
       .call(x)
 
-    let line = {}
     const tooltip = this.tooltip(data)
 
     const tooltipLine =  this.tooltipLine(pathheight)
@@ -139,7 +138,7 @@ class Line extends Component {
 
     function drawLine(linedata, i) {
       const lineColor = linedata.color?linedata.color:color[i]
-      line = svg.append("path")
+      svg.append("path")
         .style("fill", "none")
         .style("stroke", lineColor)
         .style("stroke-width", "2")

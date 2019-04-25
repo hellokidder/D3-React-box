@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
 
 export function csv2linedata(csv, lineType, X) {
   let type = []
