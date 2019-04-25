@@ -126,6 +126,12 @@ class Line extends Component {
     const x = d3.axisBottom(scaleX)
     const y = d3.axisLeft(scaleY)
 
+    // const a = new Date("2019-03-05 22:15:39.250517425 +0000 UTC")
+    // console.log(a.getTime())
+
+    d3.select("#line")
+      .style("position","relative")
+
     const svg = d3.select("#line")
       .append("svg")
       .attr("width", width)
@@ -292,6 +298,7 @@ class Line extends Component {
   tooltip = (data,color) => {
     const tooltip = d3.select("#line")
       .append("div")
+      .attr("id","test")
       .style("position", "absolute")
       .style("background-color", "rgba(255, 255, 255, 0.9)")
       .style("box-shadow", "rgb(174, 174, 174) 0px 0px 10px")
@@ -348,7 +355,7 @@ class Line extends Component {
 
   render() {
     return (
-      <div id = "line">
+      <div id = "line" >
       </div>
     );
   }
