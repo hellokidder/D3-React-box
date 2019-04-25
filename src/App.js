@@ -19,8 +19,11 @@ class App extends Component {
     const line = [
       {
         name: "A",
-        dot: true/false,
-        color: "#ffffff"
+        dot: true,
+        color: "black",
+        width: 1,
+        linecap: "square",
+        dasharray: "10",
       }
     ]
     return (
@@ -28,7 +31,7 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
-        <Line data={lineData} axis={axis} tooltip={true} tooltipline={true} dot={true} layout={layout} line={line} />
+        <Line data={lineData} tooltip={true} tooltipline={true} dot={false} layout={layout} line={line} />
       </div>
     );
   }

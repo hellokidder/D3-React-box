@@ -6,7 +6,7 @@ import { findMinMax,data2linedata } from '../utils/utils'
 class Line extends Component {
 
   componentDidMount() {
-    const { data, axis, layout, dot, tooltip, tooltipline } = this.props;
+    const { data, axis, layout, dot, tooltip, tooltipline, line  } = this.props;
     let padding = lineConfig.padding
     let width = lineConfig.width
     let height = lineConfig.height
@@ -17,9 +17,9 @@ class Line extends Component {
     const color = lineConfig.color
     const thisaxis = {}
     const keys = Object.keys(data[0])
-    thisaxis.X = axis.x ? axis.x : keys[0]
+    thisaxis.X = axis?( axis.x ? axis.x : keys[0]) : keys[0]
     keys.splice(keys.indexOf(thisaxis.X),1)
-    thisaxis.Y = axis.y ? axis.y : keys;
+    thisaxis.Y =axis? (axis.y ? axis.y : keys):keys
     if (layout !== undefined) {
       padding = layout.padding ? layout.padding : lineConfig.padding
       width = layout.width ? layout.width : lineConfig.width
@@ -41,7 +41,7 @@ class Line extends Component {
       tooltipable = tooltip
       tooltipLineable = tooltipline
     }
-      function setaxis(theaxis) {
+    function setaxis(theaxis) {
       if (axis[theaxis]) {
         if (axis[theaxis].path) {
           axisXY[theaxis].path = axis[theaxis].path
@@ -60,11 +60,46 @@ class Line extends Component {
         }
       }
     }
-    setaxis("axisX");
-    setaxis("axisY")
+    if (axis) {
+      setaxis("axisX");
+      setaxis("axisY")
+    }
 
-    console.log(lineData)
-
+    for (let i = 0; i < lineData.length; i += 1){
+      lineData[i].dot = dotable
+      lineData[i].width =  lineConfig.line.width
+      lineData[i].linecap = lineConfig.line.linecap
+      lineData[i].dasharray = lineConfig.line.dasharray
+      if (lineConfig.color[i]) {
+        console.log(lineConfig.color[i])
+        lineData[i].color =lineConfig.color[i]
+      } else {
+        const colorRound = '#'+Math.floor(Math.random()*256).toString(16)+Math.floor(Math.random()*256).toString(16)+Math.floor(Math.random()*256).toString(16)
+        lineData[i].color = colorRound
+      }
+    }
+    function setlineData() {
+      for (let i = 0; i < lineData.length; i += 1){
+        for (let n = 0; n < line.length; n += 1){
+          if (line[n].name === lineData[i].name) {
+            lineData[i].dot = line[n].dot ? line[n].dot : dotable
+            if (lineConfig.color[i]) {
+              console.log(lineConfig.color[i])
+              lineData[i].color = line[n].color ? line[n].color : lineConfig.color[i]
+            } else {
+              const colorRound = '#'+Math.floor(Math.random()*256).toString(16)+Math.floor(Math.random()*256).toString(16)+Math.floor(Math.random()*256).toString(16)
+              console.log(colorRound)
+              lineData[i].color = colorRound
+            }
+            lineData[i].width = line[n].width ? line[n].width : lineConfig.line.width
+            lineData[i].linecap = line[n].linecap ? line[n].linecap : lineConfig.line.linecap
+            lineData[i].dasharray = line[n].dasharray ? line[n].dasharray : lineConfig.line.dasharray
+          }
+        }
+      }
+    }
+    setlineData()
+  console.log(lineData)
     // 放大器
     var scaleX = d3.scaleLinear()
       .domain([0,data.length-1])
@@ -104,6 +139,9 @@ class Line extends Component {
         if (tooltipLineable) {
           tooltipLine.style("opacity",0)
         }
+        if (tooltipable) {
+          // toolTip.style("visibility","hidden")
+        }
       })
       .on("mousemove", function () {
         const m = d3.mouse(this)
@@ -132,13 +170,13 @@ class Line extends Component {
                 .text(`${lineData[i].data[countX]}`)
             }
             // toolTip 跟随鼠标并限制在SVG区域
-                if (m[0] > padding.left&& m[0]<pathwidth-60) {
-                  toolTip.style("left",`${m[0]+60}px`)
+                if (m[0] > padding.left&& m[0]<pathwidth-80) {
+                  toolTip.style("left",`${m[0]}px`)
                 } else {
-                  toolTip.style("left",`${m[0]-60}px`)
+                  toolTip.style("left",`${m[0]}px`)
                 }
-                if (m[1] > padding.top&& m[1]<pathheight-40) {
-                  toolTip.style("top",`${m[1]+110}px`)
+                if (m[1] > padding.top&& m[1]<pathheight-20*lineData.length) {
+                  toolTip.style("top",`${m[1]}px`)
                 } else {
                   toolTip.style("top",`${m[1]}px`)
                 }
@@ -146,7 +184,7 @@ class Line extends Component {
           }
         } else {
           if (tooltipable) {
-            toolTip.style("visibility","hidden")
+            // toolTip.style("visibility","hidden")
           }
         }
       })
@@ -187,20 +225,20 @@ class Line extends Component {
         }
       }
 
-      function drawLine(linedata, i) {
-        const lineColor = linedata.color ? linedata.color : color[i]
+      function drawLine(linedata) {
         svg.append("path")
           .style("fill", "none")
-          .style("stroke", lineColor)
-          .style("stroke-width", "2")
+          .style("stroke", linedata.color)
+          .style("stroke-width", linedata.width)
+          .style("stroke-dasharray", linedata.dasharray)
+          .style("stroke-linecap",linedata.linecap)
           .attr("d",  lineGengeator(linedata.data))
           .attr("transform", `translate(${padding.left},${padding.top})`)
-        if (dotable) {
-          drowCircle(linedata,i)
+        if (linedata.dot) {
+          drowCircle(linedata)
         }
       }
-      function drowCircle(linedata, i) {
-        const circleColor = linedata.color ? linedata.color:color[i]
+      function drowCircle(linedata) {
         svg.selectAll(`circle${linedata.name}`)
           .data(linedata.data)
           .enter()
@@ -218,7 +256,7 @@ class Line extends Component {
             return scaleY(d)
           })
           .attr("r", 3)
-          .attr("fill", circleColor)
+          .attr("fill", linedata.color)
           .attr("stroke", "white")
           .attr("stroke-width", 1)
           .attr("transform", `translate(${padding.left},${padding.top})`);
@@ -270,36 +308,33 @@ class Line extends Component {
       .style("text-align", "left")
       .style("margin-bottom","4px")
 
-    const ul = tooltip.append("ul")
+    const ul = tooltip.append("div")
       .style("margin", "0px")
-      .style("list-style-type", "none")
+      // .style("list-style-type", "none")
       .style("padding","0px")
 
     for (let i = 0; i < data.length; i += 1){
-      const lineColor = data.color ? data.color : color[i]
-      const tip = ul.append("li")
+      const tip = ul.append("div")
         .attr("id", `${data[i].name}`)
 
-      const dot = tip.append("span")
+      const dot = tip.append("div")
         .style("display", "inline-block")
-        .style("float","left")
         .style("width", "8px")
         .style("height","20px")
-        dot.append("span")
+        dot.append("div")
         .style("display", "inline-block")
         .style("border-radius", "50%")
-        .style("background-color", lineColor)
+        .style("background-color", data[i].color)
         .style("margin-right", "0px")
         .style("padding-right", "0px")
         .style("width", "8px")
         .style("height","8px")
         .attr("id", `${data[i].name}dot`)
-      tip.append("span")
+      tip.append("div")
         .style("display", "inline-block")
         .style("margin-left","5px")
-        .style("float","left")
         .attr("id", `${data[i].name}key`)
-      tip.append("span")
+      tip.append("div")
         .style("display", "inline-block")
         .attr("id", `${data[i].name}val`)
         .style("margin-left", "30px")

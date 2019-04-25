@@ -34,12 +34,13 @@ axis = {
       name: "A"
       dot: true/false
       color: "#ffffff"
+      stroke-width: 1
+      stroke-linecap: "butt"/"round"/"square"
+      stroke-dasharray: "5,5"
     }
   ]
 
-## dot
-
-  dot = {true}
+## dot={true}
 
 ## tooltip={true}
 
