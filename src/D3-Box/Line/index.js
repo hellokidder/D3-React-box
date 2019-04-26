@@ -176,15 +176,16 @@ class Line extends Component {
                 .text(`${lineData[i].data[countX]}`)
             }
             // toolTip 跟随鼠标并限制在SVG区域
-                if (m[0] > padding.left&& m[0]<pathwidth-80) {
-                  toolTip.style("left",`${m[0]}px`)
+            const tool = document.getElementById("tooltip")
+                if (m[0] > padding.left&& m[0]<(width-padding.right)-(tool.offsetWidth+15)) {
+                  toolTip.style("left",`${m[0]+15}px`)
                 } else {
-                  toolTip.style("left",`${m[0]}px`)
+                  toolTip.style("left",`${m[0]-15-tool.offsetWidth}px`)
                 }
-                if (m[1] > padding.top&& m[1]<pathheight-20*lineData.length) {
-                  toolTip.style("top",`${m[1]}px`)
+                if (m[1] > padding.top&& m[1]<(height-padding.bottom)-(tool.offsetHeight+15)) {
+                  toolTip.style("top",`${m[1]+15}px`)
                 } else {
-                  toolTip.style("top",`${m[1]}px`)
+                  toolTip.style("top",`${m[1]-15-tool.offsetHeight}px`)
                 }
                 toolTip.style("visibility","visible")
           }
@@ -298,7 +299,7 @@ class Line extends Component {
   tooltip = (data,color) => {
     const tooltip = d3.select("#line")
       .append("div")
-      .attr("id","test")
+      .attr("id","tooltip")
       .style("position", "absolute")
       .style("background-color", "rgba(255, 255, 255, 0.9)")
       .style("box-shadow", "rgb(174, 174, 174) 0px 0px 10px")
@@ -323,8 +324,13 @@ class Line extends Component {
     for (let i = 0; i < data.length; i += 1){
       const tip = ul.append("div")
         .attr("id", `${data[i].name}`)
+        .style("text-align"," left")
 
-      const dot = tip.append("div")
+      const name = tip.append("div")
+        .style("display", "inline-block")
+        .style("text-align"," left")
+
+      const dot = name.append("div")
         .style("display", "inline-block")
         .style("width", "8px")
         .style("height","20px")
@@ -337,7 +343,7 @@ class Line extends Component {
         .style("width", "8px")
         .style("height","8px")
         .attr("id", `${data[i].name}dot`)
-      tip.append("div")
+      name.append("div")
         .style("display", "inline-block")
         .style("margin-left","5px")
         .attr("id", `${data[i].name}key`)
@@ -355,7 +361,7 @@ class Line extends Component {
 
   render() {
     return (
-      <div id = "line" >
+      <div id = "line" style={{display:"inline-block"}} >
       </div>
     );
   }
