@@ -69,6 +69,7 @@ class Line extends Component {
       lineData[i].dot = dotable
       lineData[i].width =  lineConfig.line.width
       lineData[i].linecap = lineConfig.line.linecap
+      lineData[i].linejoin = lineConfig.line.linejoin
       lineData[i].dasharray = lineConfig.line.dasharray
       lineData[i].unit = ""
       if (lineConfig.color[i]) {
@@ -95,13 +96,13 @@ class Line extends Component {
             lineData[i].unit = line[n].unit ? line[n].unit : ""
             lineData[i].width = line[n].width ? line[n].width : lineConfig.line.width
             lineData[i].linecap = line[n].linecap ? line[n].linecap : lineConfig.line.linecap
+            lineData[i].linejoin = line[n].linejoin ? line[n].linejoin : lineConfig.line.linejoin
             lineData[i].dasharray = line[n].dasharray ? line[n].dasharray : lineConfig.line.dasharray
           }
         }
       }
     }
     setlineData()
-  console.log(minMaxY,pathheight)
     // 放大器
     var scaleX = d3.scaleLinear()
       .domain([0,data.length-1])
@@ -128,8 +129,6 @@ class Line extends Component {
     const x = d3.axisBottom(scaleX)
     const y = d3.axisLeft(scaleY)
 
-    // const a = new Date("2019-03-05 22:15:39.250517425 +0000 UTC")
-    // console.log(a.getTime())
 
     d3.select("#line")
       .style("position","relative")
@@ -219,14 +218,78 @@ class Line extends Component {
         return data[d][thisaxis.X]
       }
     })
+
+
+    // 是否显示tooltipline
       let tooltipLine = {}
       if (tooltipLineable) {
         tooltipLine = this.tooltipLine(pathheight)
       }
+
+    // 是否显示tooltip
       let toolTip = {}
       if (tooltipable) {
         toolTip = this.tooltip(lineData,color)
       }
+
+    // 图例
+
+    function setLegend(linedata) {
+      const legend = svg.append("g")
+        .attr("transform", `translate(${padding.left},${height})`)
+
+      const a = pathwidth / linedata.length/2
+      console.log("aa", a)
+      const mid = pathwidth/2-a*(linedata.length-1)/2
+      for (let i = 0; i < linedata.length; i += 1){
+        legend.append("path")
+          .attr("d", `M0,0L10,0`)
+          .style("fill", "none")
+          .style("stroke", linedata[i].color)
+          .style("stroke-width", linedata[i].width)
+          .style("stroke-linecap", linedata[i].linecap)
+          .attr("transform", `translate(${i * a + mid},${-6})`)
+          .on("mouseover", function () {
+            for (let n = 0; n < linedata.length; n += 1){
+              svg.select(`path#${linedata[n].name}`)
+              .style("opacity", 0.1)
+            }
+            svg.select(`path#${linedata[i].name}`)
+            .style("opacity",1)
+            .style("stroke-width", linedata[i].width + 1)
+          })
+          .on("mouseout", function () {
+            for (let n = 0; n < linedata.length; n += 1){
+              svg.select(`path#${linedata[n].name}`)
+                .style("opacity", 1)
+                .style("stroke-width", linedata[i].width)
+            }
+          })
+        legend.append("text")
+          .text(linedata[i].name)
+          .style("font-size", "16px")
+          .style("fill", "#8b8b8b")
+          .attr("x", i * a + 15 + mid)
+        .on("mouseover", function () {
+            for (let n = 0; n < linedata.length; n += 1){
+              svg.select(`path#${linedata[n].name}`)
+              .style("opacity", 0.1)
+            }
+            svg.select(`path#${linedata[i].name}`)
+            .style("opacity",1)
+            .style("stroke-width", linedata[i].width + 1)
+          })
+          .on("mouseout", function () {
+            for (let n = 0; n < linedata.length; n += 1){
+              svg.select(`path#${linedata[n].name}`)
+                .style("opacity", 1)
+                .style("stroke-width", linedata[i].width)
+            }
+          })
+      }
+
+    }
+    setLegend(lineData)
 
       function loopDrawLine(data) {
         for (let i = 0; i < data.length; i += 1){
@@ -242,11 +305,12 @@ class Line extends Component {
           .style("stroke-width", linedata.width)
           .style("stroke-dasharray", linedata.dasharray)
           .style("stroke-linecap",linedata.linecap)
+          .style("stroke-linejoin",linedata.linejoin)
           .attr("d",  lineGengeator(linedata.data))
           .attr("transform", `translate(${padding.left},${padding.top})`)
           .on("mouseover", function () {
             svg.select(`path#${linedata.name}`)
-            .style("stroke-width", linedata.width+1)
+              .style("stroke-width", linedata.width + 1)
           })
           .on("mouseout", function () {
             svg.select(`path#${linedata.name}`)
@@ -291,10 +355,10 @@ class Line extends Component {
     axis.selectAll("g")
     .select("line")
     .attr("stroke", axisXY.tick)
-      .attr("stroke-width", "1")
+    .attr("stroke-width", "1")
     axis.selectAll("g")
     .select("text")
-    .attr("stroke", axisXY.text)
+    .attr("fill", axisXY.text)
   }
   tooltipLine = (pathheight) => {
     const tooltipLine = d3.select("svg")
@@ -329,7 +393,6 @@ class Line extends Component {
 
     const ul = tooltip.append("div")
       .style("margin", "0px")
-      // .style("list-style-type", "none")
       .style("padding","0px")
 
     for (let i = 0; i < data.length; i += 1){

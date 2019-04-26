@@ -62,7 +62,6 @@ class Line extends Component {
         const m = d3.mouse(this)
         const a = Math.round((m[0] - padding.left) / (pathwidth / (dataLength - 1)))
         const pathX = a * (pathwidth / (dataLength - 1))
-        // console.log(scaleXZ(pathX))
         svg.selectAll("circle")
           .attr("stroke-width", 1)
         tooltip.select("#title")

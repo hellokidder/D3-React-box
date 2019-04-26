@@ -11,8 +11,8 @@ class App extends Component {
     const csv = d3.csvParse(csvt)
     // console.log(csv)
     const axis = {
-      x: "T",
-      y:["A"],
+      // x: "X",
+      // y:["A"],
       // axisX: {
       //   path: "red",
       //   tick:"black"
@@ -28,10 +28,12 @@ class App extends Component {
         color: "#008ffa",
         width: 2,
         linecap: "square",
+        linejoin: "miter",
         // dasharray: "10",
         unit:"元"
       }
     ]
+    console.log(lineData)
     return (
       <div className="App">
         <header className="App-header">

@@ -26,7 +26,8 @@ export const lineConfig = {
   color: ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"],
   line : {
       width: 2,
-      linecap: "round",
+    linecap: "round",
+    linejoin:"round",
       dasharray: "none",
     },
   axis: {
