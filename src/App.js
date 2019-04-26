@@ -9,23 +9,46 @@ class App extends Component {
   render() {
     const csvt = testCsvData();
     const csv = d3.csvParse(csvt)
-    // console.log(csv)
     const axis = {
-      // x: "X",
-      // y:["A"],
-      // axisX: {
-      //   path: "red",
-      //   tick:"black"
-      // }
+      x: "X",
+      y:["A", "B", "C"],
+      axisX: {
+        path: "#dddddd",
+        pathwidth: 2,
+        tick: "#dddddd",
+        tickwidth: 1,
+        text: "#dddddd"
+      },
+      axisY: {
+        path: "white",
+        pathwidth: 2,
+        tick: "#dddddd",
+        tickwidth: 1,
+        text: "#dddddd"
+      }
     }
     const layout = {
-      width: 1000
+      width:1000,
+      height: 500,
+      padding: { top: 40, left: 45, right: 40, bottom: 40 },
+      tooltip: true,
+      tooltipline:true,
+      dot: true,
     }
     const line = [
       {
         name: "A",
-        dot: false,
+        dot: true,
         color: "#008ffa",
+        width: 2,
+        linecap: "square",
+        linejoin: "miter",
+        // dasharray: "10",
+        unit:"元"
+      }, {
+        name: "C",
+        dot: true,
+        // color: "#008ffa",
         width: 2,
         linecap: "square",
         linejoin: "miter",
@@ -33,13 +56,12 @@ class App extends Component {
         unit:"元"
       }
     ]
-    console.log(lineData)
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
-        <Line data={csv} tooltip={true} tooltipline={true} axis={axis} dot={false} layout={layout} line={line} />
+        <Line data={lineData} axis={axis} layout={layout} line={line} />
       </div>
     );
   }

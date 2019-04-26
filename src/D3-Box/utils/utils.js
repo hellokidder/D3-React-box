@@ -33,7 +33,6 @@ export function findMinMax(data, axis) {
       const num = data[i][axis.Y[n]]-0
       if (minMax.min === undefined) {
         minMax.min = num
-        console.log(num)
       }
       if (minMax.max === undefined) {
         minMax.max = num

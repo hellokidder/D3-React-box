@@ -7,11 +7,11 @@ const setLineData = (len) => {
     data.A = Math.floor(Math.random() * 100)
     data.B = Math.floor(Math.random() * 100)
     data.C = Math.floor(Math.random() * 100)
-    data.D = Math.floor(Math.random() * 100)
-    data.E = Math.floor(Math.random() * 100)
-    data.F = Math.floor(Math.random() * 100)
-    data.G = Math.floor(Math.random() * 100)
-    data.H = Math.floor(Math.random() * 100)
+    // data.D = Math.floor(Math.random() * 100)
+    // data.E = Math.floor(Math.random() * 100)
+    // data.F = Math.floor(Math.random() * 100)
+    // data.G = Math.floor(Math.random() * 100)
+    // data.H = Math.floor(Math.random() * 100)
     datas.push(data)
   }
   return datas
@@ -24,11 +24,15 @@ export const lineConfig = {
   height: 500,
   padding: { top: 40, left: 45, right: 40, bottom: 40 },
   color: ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"],
+  dotable: true,
+  tooltipable: true,
+  tooltiplineable:true,
   line : {
-      width: 2,
+    width: 2,
     linecap: "round",
     linejoin:"round",
-      dasharray: "none",
+    dasharray: "none",
+    unit:""
     },
   axis: {
     axisX: {

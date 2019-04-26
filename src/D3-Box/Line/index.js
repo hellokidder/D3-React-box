@@ -6,14 +6,14 @@ import { findMinMax,data2linedata } from '../utils/utils'
 class Line extends Component {
 
   componentDidMount() {
-    const { data, axis, layout, dot, tooltip, tooltipline, line  } = this.props;
+    const { data, axis, layout, line  } = this.props;
     let padding = lineConfig.padding
     let width = lineConfig.width
     let height = lineConfig.height
-    let dotable = true
-    let tooltipable = false
-    let tooltipLineable = false
-    let axisXY = lineConfig.axis
+    let dotable = lineConfig.dotable
+    let tooltipable = lineConfig.tooltipable
+    let tooltiplineable = lineConfig.tooltiplineable
+    let axisConfig = lineConfig.axis
     const color = lineConfig.color
     const thisaxis = {}
     const keys = Object.keys(data[0])
@@ -21,10 +21,14 @@ class Line extends Component {
     keys.splice(keys.indexOf(thisaxis.X),1)
     thisaxis.Y =axis? (axis.y ? axis.y : keys):keys
     if (layout !== undefined) {
-      padding = layout.padding ? layout.padding : lineConfig.padding
-      width = layout.width ? layout.width : lineConfig.width
-      height = layout.height ? layout.height : lineConfig.height
+      if(layout.padding) padding = layout.padding
+      if(layout.padding) width = layout.width
+      if(layout.height) height = layout.height
+      if(layout.dot !== undefined) dotable = layout.dot
+      if(layout.tooltip !== undefined) tooltipable = layout.tooltip
+      if(layout.tooltipline !== undefined) tooltiplineable = layout.tooltipline
     }
+
     const pathwidth = width - padding.left - padding.right
     const pathheight = height - padding.top - padding.bottom
 
@@ -33,31 +37,14 @@ class Line extends Component {
     if (pathwidth / data.length < 10) {
       dotable = false
     }
-    if (dot !== undefined) {
-      dotable = dot
-    }
 
-    if (tooltip !== undefined) {
-      tooltipable = tooltip
-      tooltipLineable = tooltipline
-    }
-    function setaxis(theaxis) {
+   function setaxis(theaxis){
       if (axis[theaxis]) {
-        if (axis[theaxis].path) {
-          axisXY[theaxis].path = axis[theaxis].path
-        }
-        if (axis[theaxis].pathwidth) {
-          axisXY[theaxis].pathwidth = axis[theaxis].pathwidth
-        }
-        if (axis[theaxis].tick) {
-          axisXY[theaxis].tick = axis[theaxis].tick
-        }
-        if (axis[theaxis].tickwidth) {
-          axisXY[theaxis].tickwidth = axis[theaxis].tickwidth
-        }
-        if (axis[theaxis].text) {
-          axisXY[theaxis].text = axis[theaxis].text
-        }
+        if (axis[theaxis].path) axisConfig[theaxis].path = axis[theaxis].path
+        if (axis[theaxis].pathwidth) axisConfig[theaxis].pathwidth = axis[theaxis].pathwidth
+        if (axis[theaxis].tick) axisConfig[theaxis].tick = axis[theaxis].tick
+        if (axis[theaxis].tickwidth) axisConfig[theaxis].tickwidth = axis[theaxis].tickwidth
+        if (axis[theaxis].text) axisConfig[theaxis].text = axis[theaxis].text
       }
     }
     if (axis) {
@@ -71,9 +58,8 @@ class Line extends Component {
       lineData[i].linecap = lineConfig.line.linecap
       lineData[i].linejoin = lineConfig.line.linejoin
       lineData[i].dasharray = lineConfig.line.dasharray
-      lineData[i].unit = ""
+      lineData[i].unit = lineConfig.line.unit
       if (lineConfig.color[i]) {
-        console.log(lineConfig.color[i])
         lineData[i].color =lineConfig.color[i]
       } else {
         const colorRound = '#'+Math.floor(Math.random()*256).toString(16)+Math.floor(Math.random()*256).toString(16)+Math.floor(Math.random()*256).toString(16)
@@ -84,20 +70,18 @@ class Line extends Component {
       for (let i = 0; i < lineData.length; i += 1){
         for (let n = 0; n < line.length; n += 1){
           if (line[n].name === lineData[i].name) {
-            lineData[i].dot = line[n].dot ? line[n].dot : dotable
             if (lineConfig.color[i]) {
-              console.log(lineConfig.color[i])
-              lineData[i].color = line[n].color ? line[n].color : lineConfig.color[i]
+              if(line[n].color) lineData[i].color = line[n].color
             } else {
               const colorRound = '#'+Math.floor(Math.random()*256).toString(16)+Math.floor(Math.random()*256).toString(16)+Math.floor(Math.random()*256).toString(16)
-              console.log(colorRound)
               lineData[i].color = colorRound
             }
-            lineData[i].unit = line[n].unit ? line[n].unit : ""
-            lineData[i].width = line[n].width ? line[n].width : lineConfig.line.width
-            lineData[i].linecap = line[n].linecap ? line[n].linecap : lineConfig.line.linecap
-            lineData[i].linejoin = line[n].linejoin ? line[n].linejoin : lineConfig.line.linejoin
-            lineData[i].dasharray = line[n].dasharray ? line[n].dasharray : lineConfig.line.dasharray
+            if (line[n].dot !== undefined) lineData[i].dot = line[n].dot
+            if (line[n].unit) lineData[i].unit = line[n].unit
+            if (line[n].width) lineData[i].width = line[n].width
+            if (line[n].linecap) lineData[i].linecap = line[n].linecap
+            if (line[n].linejoin) lineData[i].linejoin = line[n].linejoin
+            if (line[n].dasharray)  lineData[i].dasharray = line[n].dasharray
           }
         }
       }
@@ -138,12 +122,12 @@ class Line extends Component {
       .attr("width", width)
       .attr("height", height)
       .on("mouseover", function () {
-        if (tooltipLineable) {
+        if (tooltiplineable) {
           tooltipLine.style("opacity",1)
         }
       })
       .on("mouseout", function () {
-        if (tooltipLineable) {
+        if (tooltiplineable) {
           tooltipLine.style("opacity",0)
         }
         if (tooltipable) {
@@ -156,7 +140,7 @@ class Line extends Component {
         const pathX = roundX * (pathwidth / (data.length - 1))
         const countX = Math.round(scaleXZ(pathX))
         if (m[0] - padding.left > 0 && m[0] - padding.left < pathwidth && m[1] > padding.top && m[1] < pathheight + padding.top) {
-          if (tooltipLineable) {
+          if (tooltiplineable) {
             tooltipLine.attr("transform", `translate(${padding.left + pathX},${padding.top})`)
           }
           // 初始化所有点的状态
@@ -207,8 +191,8 @@ class Line extends Component {
       .attr("transform", `translate(${padding.left},${height - padding.bottom})`)
       .call(x)
 
-    this.axisColor(axisX, axisXY.axisX)
-    this.axisColor(axisY, axisXY.axisY)
+    this.axisColor(axisX, axisConfig.axisX)
+    this.axisColor(axisY, axisConfig.axisY)
 
     // 修改X轴显示的数据
     axisX.selectAll("g")
@@ -222,7 +206,7 @@ class Line extends Component {
 
     // 是否显示tooltipline
       let tooltipLine = {}
-      if (tooltipLineable) {
+      if (tooltiplineable) {
         tooltipLine = this.tooltipLine(pathheight)
       }
 
@@ -238,9 +222,8 @@ class Line extends Component {
       const legend = svg.append("g")
         .attr("transform", `translate(${padding.left},${height})`)
 
-      const a = pathwidth / linedata.length/2
-      console.log("aa", a)
-      const mid = pathwidth/2-a*(linedata.length-1)/2
+      const legendLength = pathwidth / linedata.length / 2
+      const mid = pathwidth/2-legendLength*(linedata.length-1)/2
       for (let i = 0; i < linedata.length; i += 1){
         legend.append("path")
           .attr("d", `M0,0L10,0`)
@@ -248,15 +231,17 @@ class Line extends Component {
           .style("stroke", linedata[i].color)
           .style("stroke-width", linedata[i].width)
           .style("stroke-linecap", linedata[i].linecap)
-          .attr("transform", `translate(${i * a + mid},${-6})`)
+          .attr("transform", `translate(${i * legendLength + mid},${-6})`)
           .on("mouseover", function () {
             for (let n = 0; n < linedata.length; n += 1){
               svg.select(`path#${linedata[n].name}`)
-              .style("opacity", 0.1)
-            }
+                .style("opacity", 0.2)
+              }
+            svg.selectAll("circle")
+              .style("opacity", 0.2)
             svg.select(`path#${linedata[i].name}`)
-            .style("opacity",1)
-            .style("stroke-width", linedata[i].width + 1)
+              .style("opacity",1)
+              .style("stroke-width", linedata[i].width + 1)
           })
           .on("mouseout", function () {
             for (let n = 0; n < linedata.length; n += 1){
@@ -264,17 +249,21 @@ class Line extends Component {
                 .style("opacity", 1)
                 .style("stroke-width", linedata[i].width)
             }
+            svg.selectAll("circle")
+              .style("opacity", 1)
           })
         legend.append("text")
           .text(linedata[i].name)
           .style("font-size", "16px")
           .style("fill", "#8b8b8b")
-          .attr("x", i * a + 15 + mid)
+          .attr("x", i * legendLength + 15 + mid)
         .on("mouseover", function () {
             for (let n = 0; n < linedata.length; n += 1){
               svg.select(`path#${linedata[n].name}`)
-              .style("opacity", 0.1)
+              .style("opacity", 0.2)
             }
+            svg.selectAll("circle")
+            .style("opacity", 0.2)
             svg.select(`path#${linedata[i].name}`)
             .style("opacity",1)
             .style("stroke-width", linedata[i].width + 1)
@@ -285,6 +274,8 @@ class Line extends Component {
                 .style("opacity", 1)
                 .style("stroke-width", linedata[i].width)
             }
+            svg.selectAll("circle")
+            .style("opacity", 1)
           })
       }
 
@@ -325,6 +316,7 @@ class Line extends Component {
           .data(linedata.data)
           .enter()
           .append("circle")
+          .classed(`${linedata.name}`,true)
           .attr("id", function (d,i) {
             return `${linedata.name}${i}`
           })
@@ -347,6 +339,7 @@ class Line extends Component {
 
 
   }
+
 
   axisColor = (axis, axisXY) => {
     axis.select("path")
