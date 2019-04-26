@@ -22,7 +22,7 @@ export const lineData = setLineData(10);
 export const lineConfig = {
   width:1000,
   height: 500,
-  padding: { top: 40, left: 40, right: 40, bottom: 40 },
+  padding: { top: 40, left: 45, right: 40, bottom: 40 },
   color: ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"],
   line : {
       width: 2,

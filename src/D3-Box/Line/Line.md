@@ -12,7 +12,7 @@ data = [
   }
 ]
 
-## axis 必填
+## axis
 
 axis = {
   X:""

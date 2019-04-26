@@ -26,14 +26,14 @@ export function csv2linedata(csv, lineType, X) {
 }
 
 export function findMinMax(data, axis) {
-  console.log(data);
   const minMax = {}
 
   for (let i = 0; i < data.length; i += 1){
     for (let n = 0; n < axis.Y.length; n += 1){
-      const num = data[i][axis.Y[n]]
+      const num = data[i][axis.Y[n]]-0
       if (minMax.min === undefined) {
         minMax.min = num
+        console.log(num)
       }
       if (minMax.max === undefined) {
         minMax.max = num

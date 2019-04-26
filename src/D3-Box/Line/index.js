@@ -61,7 +61,7 @@ class Line extends Component {
       }
     }
     if (axis) {
-      setaxis("axisX");
+      setaxis("axisX")
       setaxis("axisY")
     }
 
@@ -70,6 +70,7 @@ class Line extends Component {
       lineData[i].width =  lineConfig.line.width
       lineData[i].linecap = lineConfig.line.linecap
       lineData[i].dasharray = lineConfig.line.dasharray
+      lineData[i].unit = ""
       if (lineConfig.color[i]) {
         console.log(lineConfig.color[i])
         lineData[i].color =lineConfig.color[i]
@@ -91,6 +92,7 @@ class Line extends Component {
               console.log(colorRound)
               lineData[i].color = colorRound
             }
+            lineData[i].unit = line[n].unit ? line[n].unit : ""
             lineData[i].width = line[n].width ? line[n].width : lineConfig.line.width
             lineData[i].linecap = line[n].linecap ? line[n].linecap : lineConfig.line.linecap
             lineData[i].dasharray = line[n].dasharray ? line[n].dasharray : lineConfig.line.dasharray
@@ -99,7 +101,7 @@ class Line extends Component {
       }
     }
     setlineData()
-  console.log(lineData)
+  console.log(minMaxY,pathheight)
     // 放大器
     var scaleX = d3.scaleLinear()
       .domain([0,data.length-1])
@@ -146,7 +148,7 @@ class Line extends Component {
           tooltipLine.style("opacity",0)
         }
         if (tooltipable) {
-          // toolTip.style("visibility","hidden")
+          toolTip.style("visibility","hidden")
         }
       })
       .on("mousemove", function () {
@@ -173,7 +175,7 @@ class Line extends Component {
               toolTip.select(`#${lineData[i].name}key`)
                 .text(`${lineData[i].name}:`)
               toolTip.select(`#${lineData[i].name}val`)
-                .text(`${lineData[i].data[countX]}`)
+                .text(`${lineData[i].data[countX]}${lineData[i].unit}`)
             }
             // toolTip 跟随鼠标并限制在SVG区域
             const tool = document.getElementById("tooltip")
@@ -191,7 +193,7 @@ class Line extends Component {
           }
         } else {
           if (tooltipable) {
-            // toolTip.style("visibility","hidden")
+            toolTip.style("visibility","hidden")
           }
         }
       })
@@ -234,6 +236,7 @@ class Line extends Component {
 
       function drawLine(linedata) {
         svg.append("path")
+          .attr("id",linedata.name)
           .style("fill", "none")
           .style("stroke", linedata.color)
           .style("stroke-width", linedata.width)
@@ -241,6 +244,14 @@ class Line extends Component {
           .style("stroke-linecap",linedata.linecap)
           .attr("d",  lineGengeator(linedata.data))
           .attr("transform", `translate(${padding.left},${padding.top})`)
+          .on("mouseover", function () {
+            svg.select(`path#${linedata.name}`)
+            .style("stroke-width", linedata.width+1)
+          })
+          .on("mouseout", function () {
+            svg.select(`path#${linedata.name}`)
+            .style("stroke-width", linedata.width)
+          })
         if (linedata.dot) {
           drowCircle(linedata)
         }
