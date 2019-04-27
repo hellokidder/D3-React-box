@@ -64,6 +64,7 @@ class Line extends Component {
       for (let i = 0; i < lineData.length; i += 1){
         lineData[i].dot = dotable
         lineData[i].width = width
+        lineData[i].click = false
         lineData[i].linecap = linecap
         lineData[i].linejoin = linejoin
         lineData[i].dasharray = dasharray
@@ -110,6 +111,7 @@ class Line extends Component {
       .y(function (d) {
         return scaleY(d)
       })
+
 
     const x = d3.axisBottom(scaleX)
     const y = d3.axisLeft(scaleY)
@@ -228,22 +230,35 @@ class Line extends Component {
           .style("stroke-width", linedata[i].width)
           .style("stroke-linecap", linedata[i].linecap)
           .attr("transform", `translate(${i * legendLength + mid},${-6})`)
+        legend.append("text")
+          .text(linedata[i].name)
+          .style("font-size", "16px")
+          .style("fill", "#8b8b8b")
+          .attr("x", i * legendLength + 15 + mid)
           .on("mouseover", function () {
             mouseOver(i)
           })
           .on("mouseout", function () {
             mouseOut(i)
           })
-        legend.append("text")
-          .text(linedata[i].name)
-          .style("font-size", "16px")
-          .style("fill", "#8b8b8b")
-          .attr("x", i * legendLength + 15 + mid)
-        .on("mouseover", function () {
-            mouseOver(i)
-          })
-          .on("mouseout", function () {
-            mouseOut(i)
+          .on("click", function (d) {
+            if (!linedata[i].click) {
+              svg.select(`#${linedata[i].name}`)
+                .attr("d", "")
+              if (linedata[i].dot) {
+                svg.selectAll(`.${linedata[i].name}`)
+                .attr("r", 0)
+              }
+              linedata[i].click = true
+            } else {
+              svg.select(`#${linedata[i].name}`)
+                .attr("d", lineGengeator(linedata[i].data))
+              if (linedata[i].dot) {
+                svg.selectAll(`.${linedata[i].name}`)
+                .attr("r", 3)
+              }
+              linedata[i].click = false
+            }
           })
       }
       function mouseOver(i) {
@@ -274,21 +289,22 @@ class Line extends Component {
 
       function loopDrawLine(data) {
         for (let i = 0; i < data.length; i += 1){
-          drawLine(data[i])
+          drawLine(data[i],i)
         }
       }
 
-      function drawLine(linedata) {
+    function drawLine(linedata, i) {
         svg.append("path")
           .style("fill", "none")
-          .style("stroke", linedata.color)
+          .style("stroke", "#ffffff")
           .style("stroke-width", linedata.width)
           .style("stroke-linecap",linedata.linecap)
           .style("stroke-linejoin",linedata.linejoin)
           .style("stroke-dasharray", linedata.dasharray)
-          .attr("id",linedata.name)
+          .attr("id", linedata.name)
           .attr("d",  lineGengeator(linedata.data))
           .attr("transform", `translate(${padding.left},${padding.top})`)
+          .style("stroke", linedata.color)
         if (linedata.dot) {
           drowCircle(linedata)
         }
@@ -298,7 +314,8 @@ class Line extends Component {
           .data(linedata.data)
           .enter()
           .append("circle")
-          .classed(`${linedata.name}`,true)
+          .classed(`${linedata.name}`, true)
+          .attr("class",`${linedata.name}`)
           .attr("id", function (d,i) {
             return `${linedata.name}${i}`
           })
@@ -314,8 +331,11 @@ class Line extends Component {
           .attr("r", 3)
           .attr("stroke", "white")
           .attr("stroke-width", 1)
+          .attr("fill","#ffffff")
+          .attr("transform", `translate(${padding.left},${padding.top})`)
+          .transition()
+          .duration(1000)
           .attr("fill", linedata.color)
-          .attr("transform", `translate(${padding.left},${padding.top})`);
       }
     loopDrawLine(lineData)
   }

@@ -44,16 +44,18 @@ export function findMinMax(data, axis) {
   return minMax
 }
 
-export function data2linedata(data,axisY) {
+export function data2linedata(data, axisY) {
   const lineData = []
   for (let n = 0; n < axisY.length; n += 1){
-    const line = {}
-    line.name = axisY[n]
-    line.data = []
-    for (let i = 0; i < data.length; i += 1){
-      line.data.push(data[i][axisY[n]])
+    if (data[0][axisY[n]] !== undefined) {
+      const line = {}
+      line.name = axisY[n]
+      line.data = []
+      for (let i = 0; i < data.length; i += 1){
+        line.data.push(data[i][axisY[n]])
+      }
+      lineData.push(line)
     }
-    lineData.push(line)
   }
   return lineData
 }

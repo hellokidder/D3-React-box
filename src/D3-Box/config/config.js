@@ -7,7 +7,7 @@ const setLineData = (len) => {
     data.A = Math.floor(Math.random() * 100)
     data.B = Math.floor(Math.random() * 100)
     data.C = Math.floor(Math.random() * 100)
-    // data.D = Math.floor(Math.random() * 100)
+    data.D = Math.floor(Math.random() * 100)
     // data.E = Math.floor(Math.random() * 100)
     // data.F = Math.floor(Math.random() * 100)
     // data.G = Math.floor(Math.random() * 100)
