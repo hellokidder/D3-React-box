@@ -234,6 +234,8 @@ class Line extends Component {
           .text(linedata[i].name)
           .style("font-size", "16px")
           .style("fill", "#8b8b8b")
+          .style("cursor","pointer")
+          .attr("id",`mouse#${linedata[i].name}`)
           .attr("x", i * legendLength + 15 + mid)
           .on("mouseover", function () {
             mouseOver(i)
