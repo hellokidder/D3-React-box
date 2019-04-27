@@ -289,14 +289,6 @@ class Line extends Component {
           .attr("id",linedata.name)
           .attr("d",  lineGengeator(linedata.data))
           .attr("transform", `translate(${padding.left},${padding.top})`)
-          .on("mouseover", function () {
-            svg.select(`path#${linedata.name}`)
-              .style("stroke-width", linedata.width + 1)
-          })
-          .on("mouseout", function () {
-            svg.select(`path#${linedata.name}`)
-            .style("stroke-width", linedata.width)
-          })
         if (linedata.dot) {
           drowCircle(linedata)
         }
