@@ -32,13 +32,14 @@ class App extends Component {
       height: 500,
       padding: { top: 40, left: 45, right: 40, bottom: 40 },
       tooltip: true,
-      tooltipline:true,
+      tooltipline: true,
+      legend:true,
       dot: true,
     }
     const line = [
       {
         name: "A",
-        dot: true,
+        dot: false,
         color: "#008ffa",
         width: 2,
         linecap: "square",
@@ -47,11 +48,11 @@ class App extends Component {
         unit:"元"
       }, {
         name: "C",
-        dot: true,
+        dot: false,
         // color: "#008ffa",
         width: 2,
         linecap: "square",
-        linejoin: "miter",
+        linejoin: "round",
         // dasharray: "10",
         unit:"元"
       }
