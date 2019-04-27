@@ -17,14 +17,14 @@ class App extends Component {
         pathwidth: 2,
         tick: "#dddddd",
         tickwidth: 1,
-        text: "#dddddd"
+        text: "#585858"
       },
       axisY: {
         path: "white",
         pathwidth: 2,
         tick: "#dddddd",
         tickwidth: 1,
-        text: "#dddddd"
+        text: "#585858"
       }
     }
     const layout = {
@@ -33,6 +33,7 @@ class App extends Component {
       padding: { top: 40, left: 45, right: 40, bottom: 40 },
       tooltip: true,
       tooltipline: true,
+      slider:false,
       legend:true,
       dot: true,
     }

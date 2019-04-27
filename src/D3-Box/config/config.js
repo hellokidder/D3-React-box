@@ -27,6 +27,7 @@ export const lineConfig = {
   dotable: true,
   tooltipable: true,
   tooltiplineable: true,
+  slider:true,
   legend:true,
   line : {
     width: 2,
@@ -40,14 +41,14 @@ export const lineConfig = {
       pathwidth: 2,
       tick: "#dddddd",
       tickwidth: 1,
-      text: "#dddddd"
+      text: "#585858"
     },
     axisY: {
       path: "white",
       pathwidth: 2,
       tick: "#dddddd",
       tickwidth: 1,
-      text: "#dddddd"
+      text: "#585858"
     }
   }
 }

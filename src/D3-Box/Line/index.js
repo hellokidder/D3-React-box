@@ -11,6 +11,7 @@ class Line extends Component {
     let width = lineConfig.width
     let height = lineConfig.height
     let legend = lineConfig.legend
+    let slider = lineConfig.slider
     let dotable = lineConfig.dotable
     let tooltipable = lineConfig.tooltipable
     let tooltiplineable = lineConfig.tooltiplineable
@@ -21,15 +22,20 @@ class Line extends Component {
     keys.splice(keys.indexOf(axisConfig.X),1)
     axisConfig.Y = axis ? (axis.y ? axis.y : keys) : keys
 
+
     if (layout !== undefined) {
       if(layout.padding) width = layout.width
       if(layout.height) height = layout.height
       if(layout.padding) padding = layout.padding
+      if(layout.slider) slider = layout.slider
       if(layout.dot !== undefined) dotable = layout.dot
       if(layout.legend !== undefined) legend = layout.legend
       if(layout.tooltip !== undefined) tooltipable = layout.tooltip
       if(layout.tooltipline !== undefined) tooltiplineable = layout.tooltipline
     }
+
+    if (slider) padding.bottom += 80
+    if(legend) padding.bottom += 20
 
     const pathwidth = width - padding.left - padding.right
     const pathheight = height - padding.top - padding.bottom
@@ -215,9 +221,9 @@ class Line extends Component {
 
     // 图例
     function setLegend(linedata) {
+      let transformHeight = slider ? height - 100 : height-20
       const legend = svg.append("g")
-        .attr("transform", `translate(${padding.left},${height})`)
-
+        .attr("transform", `translate(${padding.left},${transformHeight})`)
       const legendLength = pathwidth / linedata.length / 2
       const mid = pathwidth/2-legendLength*(linedata.length-1)/2
       for (let i = 0; i < linedata.length; i += 1){
@@ -287,6 +293,36 @@ class Line extends Component {
       setLegend(lineData)
     }
 
+    setSlider(lineData)
+    function setSlider(linedata) {
+      console.log(pathwidth)
+      const sliderX = d3.scaleLinear()
+      .domain([0,data.length-1])
+      .range([0, pathwidth])
+      const sliderY = d3.scaleLinear()
+        .domain([minMaxY.min,minMaxY.max]).nice()
+        .range([30, 0])
+    const sliderLine = d3.line()
+      .x(function (d,i) {
+        return sliderX(i)
+      })
+      .y(function (d) {
+        return sliderY(d)
+      })
+      const slider = svg.append("g")
+        slider.selectAll("path.line")
+        .data(linedata)
+        .enter()
+        .append("path")
+        .style("fill", "none")
+        .style("stroke", function(d,i){return d.color})
+        .style("stroke-width", "1")
+        .attr("d", function (d) {
+          return sliderLine(d.data)
+        })
+        .attr("transform", `translate(${padding.left},${height-50})`)
+    }
+
       function loopDrawLine(data) {
         for (let i = 0; i < data.length; i += 1){
           drawLine(data[i],i)
@@ -297,7 +333,6 @@ class Line extends Component {
         svg.append("path")
           .style("fill", "none")
           .style("stroke", linedata.color)
-          // .style("stroke", "#ffffff")
           .style("stroke-width", linedata.width)
           .style("stroke-linecap",linedata.linecap)
           .style("stroke-linejoin",linedata.linejoin)
@@ -309,7 +344,6 @@ class Line extends Component {
           .transition()
           .duration(10000)
           .attr("stroke-dashoffset", 0)
-
 
         if (linedata.dot) {
           drowCircle(linedata)
