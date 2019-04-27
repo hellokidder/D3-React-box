@@ -3,7 +3,7 @@ const setLineData = (len) => {
   const datas = []
   for (let i = 0; i < len; i += 1){
     const data = {}
-    data.X = Math.floor(Math.random() * 100) + "X"
+    data.T = Math.floor(Math.random() * 100) + "X"
     data.A = Math.floor(Math.random() * 100)
     data.B = Math.floor(Math.random() * 100)
     data.C = Math.floor(Math.random() * 100)
@@ -32,7 +32,6 @@ export const lineConfig = {
     width: 2,
     linecap: "round",
     linejoin:"round",
-    dasharray: "none",
     unit:""
     },
   axis: {

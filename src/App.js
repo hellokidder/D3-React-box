@@ -10,7 +10,7 @@ class App extends Component {
     const csvt = testCsvData();
     const csv = d3.csvParse(csvt)
     const axis = {
-      x: "X",
+      x: "T",
       y:["A", "B", "C"],
       axisX: {
         path: "#dddddd",
@@ -44,7 +44,6 @@ class App extends Component {
         width: 2,
         linecap: "square",
         linejoin: "miter",
-        // dasharray: "10",
         unit:"元"
       }, {
         name: "C",
@@ -53,7 +52,6 @@ class App extends Component {
         width: 2,
         linecap: "square",
         linejoin: "round",
-        // dasharray: "10",
         unit:"元"
       }
     ]

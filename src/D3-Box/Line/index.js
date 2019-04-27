@@ -60,14 +60,13 @@ class Line extends Component {
 
     function setlineData() {
       // 初始化线数据
-      const { width, linecap, linejoin, dasharray, unit } = lineConfig.line
+      const { width, linecap, linejoin, unit } = lineConfig.line
       for (let i = 0; i < lineData.length; i += 1){
         lineData[i].dot = dotable
         lineData[i].width = width
         lineData[i].click = false
         lineData[i].linecap = linecap
         lineData[i].linejoin = linejoin
-        lineData[i].dasharray = dasharray
         lineData[i].unit = unit
         if (lineConfig.color[i]) {
           lineData[i].color =lineConfig.color[i]
@@ -85,7 +84,6 @@ class Line extends Component {
             if (line[n].linecap) lineData[i].linecap = line[n].linecap
             if (line[n].dot !== undefined) lineData[i].dot = line[n].dot
             if (line[n].linejoin) lineData[i].linejoin = line[n].linejoin
-            if (line[n].dasharray)  lineData[i].dasharray = line[n].dasharray
           }
         }
       }
@@ -172,7 +170,7 @@ class Line extends Component {
                 } else {
                   toolTip.style("top",`${m[1]-15-tool.offsetHeight}px`)
                 }
-                toolTip.style("visibility","visible")
+              toolTip.style("visibility","visible")
           }
         } else {
           if (tooltiplineable) tooltipLine.style("opacity", 0)
@@ -298,15 +296,21 @@ class Line extends Component {
     function drawLine(linedata, i) {
         svg.append("path")
           .style("fill", "none")
-          .style("stroke", "#ffffff")
+          .style("stroke", linedata.color)
+          // .style("stroke", "#ffffff")
           .style("stroke-width", linedata.width)
           .style("stroke-linecap",linedata.linecap)
           .style("stroke-linejoin",linedata.linejoin)
-          .style("stroke-dasharray", linedata.dasharray)
+          .style("stroke-dasharray", 1000000)
           .attr("id", linedata.name)
           .attr("d",  lineGengeator(linedata.data))
           .attr("transform", `translate(${padding.left},${padding.top})`)
-          .style("stroke", linedata.color)
+          .attr("stroke-dashoffset", 1000000)
+          .transition()
+          .duration(10000)
+          .attr("stroke-dashoffset", 0)
+
+
         if (linedata.dot) {
           drowCircle(linedata)
         }
