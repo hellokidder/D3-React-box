@@ -6,7 +6,7 @@ import { findMinMax,data2linedata } from '../utils/utils'
 class Line extends Component {
 
   componentDidMount() {
-    const { data, axis, layout, line  } = this.props;
+    const { data, axis, layout, line } = this.props;
     let padding = lineConfig.padding
     let width = lineConfig.width
     let height = lineConfig.height
@@ -27,14 +27,14 @@ class Line extends Component {
       if(layout.padding) width = layout.width
       if(layout.height) height = layout.height
       if(layout.padding) padding = layout.padding
-      if(layout.slider) slider = layout.slider
       if(layout.dot !== undefined) dotable = layout.dot
+      if(layout.slider !== undefined) slider = layout.slider
       if(layout.legend !== undefined) legend = layout.legend
       if(layout.tooltip !== undefined) tooltipable = layout.tooltip
       if(layout.tooltipline !== undefined) tooltiplineable = layout.tooltipline
     }
 
-    if (slider) padding.bottom += 80
+    if(slider) padding.bottom += 30
     if(legend) padding.bottom += 20
 
     const pathwidth = width - padding.left - padding.right
@@ -124,8 +124,6 @@ class Line extends Component {
       .append("svg")
       .attr("width", width)
       .attr("height", height)
-      .on("mouseover", function () {
-      })
       .on("mouseout", function () {
         if (tooltiplineable) {
           tooltipLine.style("opacity",0)
@@ -221,7 +219,8 @@ class Line extends Component {
 
     // 图例
     function setLegend(linedata) {
-      let transformHeight = slider ? height - 100 : height-20
+      console.log(padding)
+      let transformHeight = slider ? height - 50 : height-20
       const legend = svg.append("g")
         .attr("transform", `translate(${padding.left},${transformHeight})`)
       const legendLength = pathwidth / linedata.length / 2
@@ -293,35 +292,6 @@ class Line extends Component {
       setLegend(lineData)
     }
 
-    setSlider(lineData)
-    function setSlider(linedata) {
-      console.log(pathwidth)
-      const sliderX = d3.scaleLinear()
-      .domain([0,data.length-1])
-      .range([0, pathwidth])
-      const sliderY = d3.scaleLinear()
-        .domain([minMaxY.min,minMaxY.max]).nice()
-        .range([30, 0])
-    const sliderLine = d3.line()
-      .x(function (d,i) {
-        return sliderX(i)
-      })
-      .y(function (d) {
-        return sliderY(d)
-      })
-      const slider = svg.append("g")
-        slider.selectAll("path.line")
-        .data(linedata)
-        .enter()
-        .append("path")
-        .style("fill", "none")
-        .style("stroke", function(d,i){return d.color})
-        .style("stroke-width", "1")
-        .attr("d", function (d) {
-          return sliderLine(d.data)
-        })
-        .attr("transform", `translate(${padding.left},${height-50})`)
-    }
 
       function loopDrawLine(data) {
         for (let i = 0; i < data.length; i += 1){
@@ -378,6 +348,9 @@ class Line extends Component {
           .attr("fill", linedata.color)
       }
     loopDrawLine(lineData)
+    if (slider) {
+      this.setSlider(padding,pathwidth,height)
+    }
   }
 
 
@@ -404,7 +377,79 @@ class Line extends Component {
     return tooltipLine
   }
 
-  tooltip = (data,color) => {
+  setSlider = (padding, pathwidth, height) => {
+    const top = height - 30
+    let x = padding.left
+    let y = pathwidth
+    const slider = d3.select("#line")
+      .append("div")
+      .attr("id","slider")
+      .style("position", "absolute")
+      .style("background-color", "rgba(255, 255, 255, 0.9)")
+      .style("box-shadow", "rgb(174, 174, 174) 0px 0px 10px")
+      .style("left",`${padding.left}px`)
+      .style("top",`${top}px`)
+      .style("border-radius","3px")
+      .style("font-size", "12px")
+      .style("width",`${pathwidth}px`)
+      .style("height", "20px")
+    const sliderSvg = slider.append("svg")
+    .attr("width", pathwidth+padding.left+padding.right)
+      .attr("height", "20px")
+      .attr("transform", `translate(${-padding.left},${0})`)
+
+      sliderSvg.append("rect")
+      .attr("x", x)
+      .attr("y", 0)
+      .attr("height", 20)
+      .attr("width", y)
+      .style("fill", "#cddaef")
+      .style("stroke", "#a3afc3")
+      .style("cursor", "move")
+      .on("mousedown", function () {
+        const m = d3.mouse(this)
+        console.log("123",m[0])
+      })
+
+
+		const drag = d3.drag()
+    .on("drag", dragmove);
+
+    function dragmove(d) {
+      const m = d3.mouse(this)
+      console.log(m[0],this)
+      d3.select(this)
+        .transition()
+        .duration(1)
+        .attr("x", m[0])
+    }
+
+    sliderSvg.append("rect")
+      .attr("x", x-3)
+      .attr("y", 4)
+      .attr("height", 12)
+      .attr("width", 6)
+      .style("fill","none")
+      .style("stroke", "#a3afc3")
+      .style("stroke-width", 3)
+      .style("cursor", "ew-resize")
+      .call(drag)
+    sliderSvg.append("rect")
+    .attr("x", y+padding.left-3)
+    .attr("y", 4)
+    .attr("height", 12)
+    .attr("width", 6)
+    .style("fill","none")
+    .style("stroke", "#a3afc3")
+    .style("stroke-width", 3)
+      // .style("cursor", "ew-resize")
+      // .call(drag)
+
+
+
+  }
+
+  tooltip = (data) => {
     const tooltip = d3.select("#line")
       .append("div")
       .attr("id","tooltip")

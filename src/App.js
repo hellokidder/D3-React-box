@@ -33,7 +33,7 @@ class App extends Component {
       padding: { top: 40, left: 45, right: 40, bottom: 40 },
       tooltip: true,
       tooltipline: true,
-      slider:false,
+      slider:true,
       legend:true,
       dot: true,
     }
