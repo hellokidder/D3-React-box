@@ -477,8 +477,6 @@ class Line extends Component {
         console.log("x",x,"y",y)
       })
 
-
-
     const slider = d3.select("#line")
       .append("div")
       .attr("id","slider")
