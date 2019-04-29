@@ -219,7 +219,6 @@ class Line extends Component {
 
     // 图例
     function setLegend(linedata) {
-      console.log(padding)
       let transformHeight = slider ? height - 50 : height-20
       const legend = svg.append("g")
         .attr("transform", `translate(${padding.left},${transformHeight})`)
@@ -380,7 +379,106 @@ class Line extends Component {
   setSlider = (padding, pathwidth, height) => {
     const top = height - 30
     let x = padding.left
-    let y = pathwidth
+    let y = padding.left + pathwidth
+    let roomPoint = 0
+
+    const dragx = d3.drag()
+    .on("drag", function (d) {
+      const m = d3.mouse(this)
+      if (m[0] >= padding.left && m[0] <= padding.left + pathwidth) {
+        x = m[0]
+        d3.select(this)
+          .transition()
+          .duration(1)
+          .attr("x", m[0] - 3)
+        dragxy(m)
+      }
+    })
+    .on("end", function () {
+      dragEnd()
+    })
+    const dragy = d3.drag()
+    .on("drag",function (d) {
+      const m = d3.mouse(this)
+      if (m[0] >= padding.left && m[0] <= (padding.left + pathwidth)) {
+        y = m[0]
+        d3.select(this)
+        .transition()
+        .duration(1)
+        .attr("x", m[0] - 3)
+        dragxy(m)
+      }
+    })
+    .on("end", function () {
+        dragEnd()
+    })
+    function dragEnd() {
+      if (x > y) {
+        [x, y] = [y, x]
+        sliderLeft.attr("x", x - 3)
+        sliderRight.attr("x", y - 3)
+      }
+      console.log("x",x,"y",y)
+    }
+    function dragxy(m) {
+      room.transition()
+        .duration(1)
+        .attr("x", x<y?x:y)
+      .attr("width", x<y?y-x:x-y)
+    }
+
+
+
+
+    const dragRoom = d3.drag()
+      .on("start", function () {
+        const m = d3.mouse(this)
+        roomPoint = m[0]
+      })
+      .on("drag", function () {
+        const m = d3.mouse(this)
+        const move = m[0] - roomPoint
+        const roomWidth = y - x
+        let dragX = x + move
+        let dragY = y + move
+        if (dragX < padding.left) {
+          dragX = padding.left
+          dragY = roomWidth + padding.left
+        } else if (dragY > padding.left + pathwidth) {
+          dragY = padding.left + pathwidth
+          dragX = padding.left + pathwidth - roomWidth
+        }
+        d3.select(this)
+          .transition()
+          .duration(1)
+          .attr("x", dragX)
+        sliderLeft.transition()
+          .duration(1)
+          .attr("x", dragX - 3)
+        sliderRight.transition()
+        .duration(1)
+        .attr("x",dragY - 3)
+      })
+      .on("end", function () {
+        const m = d3.mouse(this)
+        const move = m[0] - roomPoint
+        const roomWidth = y - x
+        let dragX = x + move
+        let dragY = y + move
+        if (dragX < padding.left) {
+          dragX = padding.left
+          dragY = roomWidth + padding.left
+        } else if (dragY > padding.left + pathwidth) {
+          dragY = padding.left + pathwidth
+          dragX = padding.left + pathwidth - roomWidth
+        }
+        x = dragX
+        y = dragY
+        console.log("x",x,"y",y)
+      })
+
+
+
     const slider = d3.select("#line")
       .append("div")
       .attr("id","slider")
@@ -391,40 +489,25 @@ class Line extends Component {
       .style("top",`${top}px`)
       .style("border-radius","3px")
       .style("font-size", "12px")
-      .style("width",`${pathwidth}px`)
+      .style("width",`${y-x}px`)
       .style("height", "20px")
+
     const sliderSvg = slider.append("svg")
-    .attr("width", pathwidth+padding.left+padding.right)
+      .attr("width", pathwidth+padding.left+padding.right)
       .attr("height", "20px")
       .attr("transform", `translate(${-padding.left},${0})`)
 
-      sliderSvg.append("rect")
+    const room =  sliderSvg.append("rect")
       .attr("x", x)
       .attr("y", 0)
       .attr("height", 20)
-      .attr("width", y)
+      .attr("width", y-x)
       .style("fill", "#cddaef")
       .style("stroke", "#a3afc3")
       .style("cursor", "move")
-      .on("mousedown", function () {
-        const m = d3.mouse(this)
-        console.log("123",m[0])
-      })
+      .call(dragRoom)
 
-
-		const drag = d3.drag()
-    .on("drag", dragmove);
-
-    function dragmove(d) {
-      const m = d3.mouse(this)
-      console.log(m[0],this)
-      d3.select(this)
-        .transition()
-        .duration(1)
-        .attr("x", m[0])
-    }
-
-    sliderSvg.append("rect")
+    const sliderLeft = sliderSvg.append("rect")
       .attr("x", x-3)
       .attr("y", 4)
       .attr("height", 12)
@@ -433,20 +516,17 @@ class Line extends Component {
       .style("stroke", "#a3afc3")
       .style("stroke-width", 3)
       .style("cursor", "ew-resize")
-      .call(drag)
-    sliderSvg.append("rect")
-    .attr("x", y+padding.left-3)
-    .attr("y", 4)
-    .attr("height", 12)
-    .attr("width", 6)
-    .style("fill","none")
-    .style("stroke", "#a3afc3")
-    .style("stroke-width", 3)
-      // .style("cursor", "ew-resize")
-      // .call(drag)
-
-
-
+      .call(dragx)
+    const sliderRight = sliderSvg.append("rect")
+      .attr("x", y-3)
+      .attr("y", 4)
+      .attr("height", 12)
+      .attr("width", 6)
+      .style("fill","none")
+      .style("stroke", "#a3afc3")
+      .style("stroke-width", 3)
+      .style("cursor", "ew-resize")
+      .call(dragy)
   }
 
   tooltip = (data) => {
@@ -507,9 +587,6 @@ class Line extends Component {
     }
     return tooltip
   }
-
-
-
 
   render() {
     return (
