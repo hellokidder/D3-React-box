@@ -6,6 +6,7 @@ import { findMinMax,data2linedata } from '../utils/utils'
 class Line extends Component {
 
   componentDidMount() {
+    // 初始化数据××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
     const { data, axis, layout, line } = this.props;
     let padding = lineConfig.padding
     let width = lineConfig.width
@@ -62,8 +63,6 @@ class Line extends Component {
       setaxis("axisX")
       setaxis("axisY")
     }
-
-
     function setlineData() {
       // 初始化线数据
       const { width, linecap, linejoin, unit } = lineConfig.line
@@ -95,6 +94,7 @@ class Line extends Component {
       }
     }
     setlineData()
+    // 绘图××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
     // 放大器
     const scaleX = d3.scaleLinear()
       .domain([0,data.length-1])
@@ -426,10 +426,6 @@ class Line extends Component {
         .attr("x", x<y?x:y)
       .attr("width", x<y?y-x:x-y)
     }
-
-
-
-
     const dragRoom = d3.drag()
       .on("start", function () {
         const m = d3.mouse(this)
