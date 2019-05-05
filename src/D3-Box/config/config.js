@@ -24,7 +24,7 @@ export const lineConfig = {
   height: 500,
   padding: { top: 40, left: 45, right: 40, bottom: 40 },
   color: ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"],
-  dotable: true,
+  dotable: false,
   tooltipable: true,
   tooltiplineable: true,
   slider:true,

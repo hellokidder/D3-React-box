@@ -117,6 +117,12 @@ class Line extends Component {
       })
 
 
+    function setXaxis(data) {
+      const scale= d3.scaleLinear()
+      .domain([0,data.length-1])
+        .range([0, pathwidth])
+      return  d3.axisBottom(scale)
+    }
     const x = d3.axisBottom(scaleX)
     const y = d3.axisLeft(scaleY)
 
@@ -189,6 +195,7 @@ class Line extends Component {
       .call(y)
     // X轴
     const axisX = svg.append("g")
+      .attr("id","axisX")
       .attr("transform", `translate(${padding.left},${height - padding.bottom})`)
       .call(x)
 
@@ -299,7 +306,7 @@ class Line extends Component {
       }
 
     function drawLine(linedata, i) {
-        svg.append("path")
+      svg.append("path")
           .style("fill", "none")
           .style("stroke", linedata.color)
           .style("stroke-width", linedata.width)
@@ -348,7 +355,7 @@ class Line extends Component {
       }
     loopDrawLine(lineData)
     if (slider) {
-      this.setSlider(padding,pathwidth,height)
+      this.setSlider(padding,pathwidth,height,unScaleX,lineData,svg,setXaxis)
     }
   }
 
@@ -376,11 +383,13 @@ class Line extends Component {
     return tooltipLine
   }
 
-  setSlider = (padding, pathwidth, height) => {
+  setSlider = (padding, pathwidth, height,unScaleX,lineData,svg,setXaxis) => {
     const top = height - 30
     let x = padding.left
     let y = padding.left + pathwidth
     let roomPoint = 0
+    console.log(lineData)
+
 
     const dragx = d3.drag()
     .on("drag", function (d) {
@@ -418,7 +427,42 @@ class Line extends Component {
         sliderLeft.attr("x", x - 3)
         sliderRight.attr("x", y - 3)
       }
-      console.log("x",x,"y",y)
+      const roomX = Math.ceil(unScaleX(x - padding.left))
+      const roomY = Math.floor(unScaleX(y - padding.left))
+
+          // 放大器
+  //   const scaleX = d3.scaleLinear()
+  //   .domain([0,data.length-1])
+  //   .range([0, pathwidth])
+  // const scaleY = d3.scaleLinear()
+  //   .domain([minMaxY.min,minMaxY.max]).nice()
+  //   .range([pathheight, 0])
+  // // X轴反缩小器
+  // const　unScaleX = d3.scaleLinear()
+  //   .domain([0,pathwidth])
+  //   .range([0, data.length-1])
+
+  // // 线条生成器
+  // const lineGengeator = d3.line()
+  //   .x(function (d,i) {
+  //     return scaleX(i)
+  //   })
+  //   .y(function (d) {
+  //     return scaleY(d)
+  //   })
+
+      for (let i = 0; i < lineData.length; i += 1){
+        const d = lineData[i].data.slice(roomX,roomY+1)
+        svg.select(`#${lineData[i].name}`)
+          .transition()
+          .duration(1000)
+          .attr("d", )
+        svg.select("#axisX")
+        .transition()
+        .duration(1000)
+        .call(setXaxis(d))
+        console.log("x", x, "y", y,"unx",roomX,"uny",roomY,d)
+      }
     }
     function dragxy(m) {
       room.transition()

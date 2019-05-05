@@ -35,7 +35,7 @@ class App extends Component {
       tooltipline: true,
       slider:true,
       legend:true,
-      dot: true,
+      dot: false,
     }
     const line = [
       {
