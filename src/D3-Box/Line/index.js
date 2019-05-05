@@ -25,7 +25,7 @@ class Line extends Component {
 
 
     if (layout !== undefined) {
-      if(layout.padding) width = layout.width
+      if(layout.width) width = layout.width
       if(layout.height) height = layout.height
       if(layout.padding) padding = layout.padding
       if(layout.dot !== undefined) dotable = layout.dot
@@ -388,7 +388,6 @@ class Line extends Component {
     let x = padding.left
     let y = padding.left + pathwidth
     let roomPoint = 0
-    console.log(lineData)
 
 
     const dragx = d3.drag()

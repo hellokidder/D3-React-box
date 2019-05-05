@@ -3,7 +3,7 @@ const setLineData = (len) => {
   const datas = []
   for (let i = 0; i < len; i += 1){
     const data = {}
-    data.T = Math.floor(Math.random() * 100) + "X"
+    data.T = i + "X"
     data.A = Math.floor(Math.random() * 100)
     data.B = Math.floor(Math.random() * 100)
     data.C = Math.floor(Math.random() * 100)
@@ -17,7 +17,7 @@ const setLineData = (len) => {
   return datas
 }
 
-export const lineData = setLineData(10);
+export const lineData = setLineData(20);
 
 export const lineConfig = {
   width:1000,

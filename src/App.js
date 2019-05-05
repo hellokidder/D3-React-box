@@ -5,6 +5,7 @@ import './App.css';
 import { lineData, } from './D3-Box/config/config'
 import {testCsvData} from './D3-Box/utils/utils'
 import Line from './D3-Box/Line'
+import LineChart from './D3-Box/LineChart'
 class App extends Component {
   render() {
     const csvt = testCsvData();
@@ -30,12 +31,11 @@ class App extends Component {
     const layout = {
       width:1000,
       height: 500,
-      padding: { top: 40, left: 45, right: 40, bottom: 40 },
       tooltip: true,
       tooltipline: true,
       slider:true,
-      legend:true,
-      dot: false,
+      legend:false,
+      dot: true,
     }
     const line = [
       {
@@ -62,6 +62,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         <Line data={lineData} axis={axis} layout={layout} line={line} />
+        <LineChart data={lineData} axis={axis} line={line} layout={layout}/>
       </div>
     );
   }
