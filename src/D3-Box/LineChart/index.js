@@ -180,7 +180,7 @@ class LineChart extends Component {
     if (tooltiplineable || tooltipable) {
       this.setSvgMouse(svg,tooltipLine,tooltip,this,padding,pathwidth,pathheight,tooltiplineable,tooltipable)
     }
-    // legend
+    // legend****************************************************************************
     if (legendable) {
       this.setLegend(this,svg, pathwidth,axisY)
     }
@@ -311,10 +311,25 @@ class LineChart extends Component {
               .text(`${renderData[countX][axis.X]}`)
           for (let i = 0; i < renderLineData.length; i += 1){
             // 将选中区域数据添加到toolTip
-            tooltip.select(`#${renderLineData[i].name}key`)
-              .text(`${renderLineData[i].name}:`)
-            tooltip.select(`#${renderLineData[i].name}val`)
-            .text(`${renderLineData[i].data[countX]}${renderLineData[i].unit}`)
+            if (renderLineData[i].click) {
+              tooltip.select(`#tooltip${renderLineData[i].name}`)
+                .style("height", "0px")
+              tooltip.select(`#${renderLineData[i].name}dot`)
+              .style("height", "0px")
+              tooltip.select(`#${renderLineData[i].name}key`)
+                .text('')
+              tooltip.select(`#${renderLineData[i].name}val`)
+                .text('')
+            } else {
+              tooltip.select(`#tooltip${renderLineData[i].name}`)
+              .style("height", "20px")
+              tooltip.select(`#${renderLineData[i].name}dot`)
+              .style("height", "8px")
+              tooltip.select(`#${renderLineData[i].name}key`)
+                .text(`${renderLineData[i].name}:`)
+              tooltip.select(`#${renderLineData[i].name}val`)
+                .text(`${renderLineData[i].data[countX]}${renderLineData[i].unit}`)
+            }
           }
           // toolTip 跟随鼠标并限制在SVG区域
           const tool = document.getElementById("tooltip")
@@ -375,7 +390,7 @@ class LineChart extends Component {
       if (!data[i].click) {
 
         const tip = ul.append("div")
-          .attr("id", `${data[i].name}`)
+          .attr("id", `tooltip${data[i].name}`)
           .style("text-align"," left")
 
         const name = tip.append("div")
