@@ -1,0 +1,29 @@
+
+#axisX path{
+  stroke: #dddddd;
+  stroke-width: 2;
+}
+#axisX line{
+    fill: none;
+    stroke: #dddddd;
+}
+
+#axisX text {
+    font-family: sans-serif;
+    fill: #585858;
+}
+
+
+#axisY path{
+  stroke: white;
+  stroke-width: 2;
+}
+#axisY line{
+    fill: none;
+    stroke: #dddddd;
+}
+
+#axisY text {
+    font-family: sans-serif;
+    fill: #585858;
+}

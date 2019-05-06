@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import {data2linedata,findMinMax } from '../utils/utils'
+import { data2linedata, findMinMax } from '../utils/utils'
+import styles from './index.css'
 import * as d3 from 'd3';
 
 class LineChart extends Component {
   state = {
     data: [],
     lineData: [],
+    renderData: [],
+    renderlineData:[],
     width:1000,
     height: 500,
     padding: { top: 40, left: 45, right: 40, bottom: 40 },
@@ -21,22 +24,7 @@ class LineChart extends Component {
       linejoin:"round",
       unit:"yuan"
       },
-    axis: {
-      axisX: {
-        path: "#dddddd",
-        pathwidth: 2,
-        tick: "#dddddd",
-        tickwidth: 1,
-        text: "#585858"
-      },
-      axisY: {
-        path: "white",
-        pathwidth: 2,
-        tick: "#dddddd",
-        tickwidth: 1,
-        text: "#585858"
-      }
-    }
+    axis: {}
   };
 
   componentWillMount() {
@@ -47,21 +35,6 @@ class LineChart extends Component {
     axisConfig.X = axis?( axis.x ? axis.x : keys[0]) : keys[0]
     keys.splice(keys.indexOf(axisConfig.X),1)
     axisConfig.Y = axis ? (axis.y ? axis.y : keys) : keys
-    //************************************************* */
-    // 初始化轴数据
-    function setaxis(xOrY) {
-      if (axis[xOrY]) {
-        if (axis[xOrY].path) axisConfig[xOrY].path = axis[xOrY].path
-        if (axis[xOrY].pathwidth) axisConfig[xOrY].pathwidth = axis[xOrY].pathwidth
-        if (axis[xOrY].tick) axisConfig[xOrY].tick = axis[xOrY].tick
-        if (axis[xOrY].tickwidth) axisConfig[xOrY].tickwidth = axis[xOrY].tickwidth
-        if (axis[xOrY].text) axisConfig[xOrY].text = axis[xOrY].text
-      }
-    }
-    if (axis) {
-      setaxis("axisX")
-      setaxis("axisY")
-    }
     //****************************************************** */
     // 初始化各项配置
     if (layout !== undefined) {
@@ -148,6 +121,8 @@ class LineChart extends Component {
       padding,
       lineData,
       data,
+      renderData: data,
+      renderlineData:lineData,
     })
   }
 
@@ -158,10 +133,18 @@ class LineChart extends Component {
     const pathheight = height - padding.top - padding.bottom
     const svg = d3.select("#svg")
     const minMaxY = findMinMax(data, axis)
+    const scaleXData = []
+    for (let i = 0; i < data.length; i += 1){
+      scaleXData.push(data[i][axis.X])
+    }
+    console.log(scaleXData)
     // 放大器
-    const scaleX = d3.scaleLinear()
-      .domain([0,data.length-1])
+    const scaleX = d3.scalePoint()
+      .domain(scaleXData)
       .range([0, pathwidth])
+    const xpoint = d3.scaleLinear()
+      .domain([0, data.length - 1])
+      .range([0,pathwidth])
     const scaleY = d3.scaleLinear()
       .domain([minMaxY.min,minMaxY.max]).nice()
       .range([pathheight, 0])
@@ -171,28 +154,18 @@ class LineChart extends Component {
     const y = d3.axisLeft(scaleY)
     // y轴
     const axisY = svg.append("g")
+    .attr("id","axisY")
     .attr("transform", `translate(${padding.left},${padding.top})`)
     .call(y)
     // X轴
     const axisX = svg.append("g")
     .attr("id","axisX")
-    .attr("transform", `translate(${padding.left},${pathheight + padding.top})`)
-    .call(x)
-    // 修改X轴显示的数据
-    axisX.selectAll("g")
-    .selectAll("text")
-    .text(function (d) {
-      if (d < data.length) {
-        return data[d][axis.X]
-      }
-    })
-    this.axisColor(axisX, axis.axisX)
-    this.axisColor(axisY, axis.axisY)
-
+      .attr("transform", `translate(${padding.left},${pathheight + padding.top})`)
+      .call(x)
   // 折线生成×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
     const lineGengeator = d3.line()
       .x(function (d,i) {
-        return scaleX(i)
+        return xpoint(i)
       })
       .y(function (d) {
         return scaleY(d)
@@ -210,13 +183,13 @@ class LineChart extends Component {
       tooltipLine = this.tooltipLine(pathheight)
     }
     if (sliderable) {
-      this.setSlider(padding,pathwidth,height,this,axisX,axis.X)
+      this.setSlider(padding,pathwidth,height,this,axisX,axisY,axis)
     }
   }
 
 
 
-  setSlider = (padding, pathwidth, height, linechart,axisX,X) => {
+  setSlider = (padding, pathwidth, height, linechart,axisX,axisY,axis) => {
     const top = height - 30
     let x = padding.left
     let y = padding.left + pathwidth
@@ -267,44 +240,63 @@ class LineChart extends Component {
         sliderLeft.attr("x", x - 3)
         sliderRight.attr("x", y - 3)
       }
-
-      const {data} = linechart.state
+      const {data, lineData} = linechart.state
       const　unScaleX = d3.scaleLinear()
       .domain([0,pathwidth])
       .range([0, data.length - 1])
       const roomX = Math.ceil(unScaleX(x - padding.left))
       const roomY = Math.floor(unScaleX(y - padding.left))
       const newData = data.slice(roomX, roomY + 1)
-      console.log(data,roomX,roomY,"NEW",newData,X)
-      const scaleX = d3.scaleLinear()
-      .domain([0,newData.length-1])
+      console.log(lineData, newData)
+      const newScaleX = []
+      for (let i = 0; i < newData.length; i += 1){
+        newScaleX.push(newData[i][axis.X])
+      }
+      const minMaxY = findMinMax(newData, axis)
+      const scaleX = d3.scalePoint()
+      .domain(newScaleX)
+        .range([0, pathwidth])
+      const scaleY = d3.scaleLinear()
+      .domain([minMaxY.min,minMaxY.max]).nice()
+        .range([height - padding.top - padding.bottom, 0])
+      const axisx = d3.axisBottom(scaleX)
+      const axisy = d3.axisLeft(scaleY)
+
+      const xpoint = d3.scaleLinear()
+      .domain([0, newData.length - 1])
         .range([0, pathwidth])
 
-    // 修改X轴显示的数据
-    axisX.selectAll("g")
-    .selectAll("text")
-    .text(function (d) {
-      if (d < newData.length) {
-        return newData[d][X]
+        const newlineGengeator = d3.line()
+      .x(function (d,i) {
+        return xpoint(i)
+      })
+      .y(function (d) {
+        return scaleY(d)
+      })
+      axisX.transition()
+      .duration(1000)
+        .call(axisx)
+      axisY.transition()
+      .duration(1000)
+        .call(axisy)
+      const newlineData = []
+      for (let i = 0; i < lineData.length; i += 1){
+        newlineData[i] = {}
+        for (const item in lineData[i]) {
+          if(item!=="data")
+          newlineData[i][item] = lineData[i][item]
+        }
+        newlineData[i].data =[]
+        newlineData[i].data = lineData[i].data.slice(roomX, roomY + 1)
+        d3.select(`#${lineData[i].name}`)
+        .transition()
+        .duration(1000)
+        .attr("d",newlineGengeator(lineData[i].data.slice(roomX, roomY + 1)))
       }
-    })
-    const axisx = d3.axisBottom(scaleX)
-    axisX.transition()
-    .duration(1000)
-    .call(axisx)
-
-
-
-
-
-
-
-
-
-
-
-
-
+      linechart.setState({
+        renderData: newData,
+        renderlineData: newlineData
+      })
     }
 
     const dragRoom = d3.drag()
@@ -351,7 +343,7 @@ class LineChart extends Component {
       }
       x = dragX
       y = dragY
-      console.log("x",x,"y",y)
+      dragEnd()
     })
 
     const slider = d3.select("#linechart")
@@ -403,6 +395,7 @@ class LineChart extends Component {
       .style("cursor", "ew-resize")
       .call(dragy)
   }
+
 
   tooltipLine = (pathheight) => {
     const tooltipLine = d3.select("#svg")
@@ -461,18 +454,6 @@ class LineChart extends Component {
       .attr("stroke-dashoffset", 0)
   }
 
-  axisColor = (axis, axisXY) => {
-    axis.select("path")
-    .attr("stroke", axisXY.path)
-    .attr("stroke-width", "2")
-    axis.selectAll("g")
-    .select("line")
-    .attr("stroke", axisXY.tick)
-    .attr("stroke-width", "1")
-    axis.selectAll("g")
-    .select("text")
-    .attr("fill", axisXY.text)
-  }
 
   render() {
     const { width, height, padding } = this.state

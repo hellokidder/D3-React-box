@@ -5,8 +5,8 @@ const setLineData = (len) => {
     const data = {}
     data.T = i + "X"
     data.A = Math.floor(Math.random() * 100)
-    data.B = Math.floor(Math.random() * 100)
-    data.C = Math.floor(Math.random() * 100)
+    data.B = Math.floor(Math.random() * 20)
+    data.C = Math.floor(Math.random() * 5)
     data.D = Math.floor(Math.random() * 100)
     // data.E = Math.floor(Math.random() * 100)
     // data.F = Math.floor(Math.random() * 100)

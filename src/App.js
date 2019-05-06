@@ -13,20 +13,6 @@ class App extends Component {
     const axis = {
       x: "T",
       y:["A", "B", "C"],
-      axisX: {
-        path: "#dddddd",
-        pathwidth: 2,
-        tick: "#dddddd",
-        tickwidth: 1,
-        text: "#585858"
-      },
-      axisY: {
-        path: "white",
-        pathwidth: 2,
-        tick: "#dddddd",
-        tickwidth: 1,
-        text: "#585858"
-      }
     }
     const layout = {
       width:1000,
@@ -61,7 +47,7 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
-        <Line data={lineData} axis={axis} layout={layout} line={line} />
+        {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
         <LineChart data={lineData} axis={axis} line={line} layout={layout}/>
       </div>
     );
