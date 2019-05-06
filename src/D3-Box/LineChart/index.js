@@ -13,7 +13,6 @@ class LineChart extends Component {
     height: 500,
     padding: { top: 40, left: 45, right: 40, bottom: 40 },
     color: ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"],
-    dotable: false,
     tooltipable: true,
     tooltiplineable: true,
     legendable: false,
@@ -29,7 +28,7 @@ class LineChart extends Component {
 
   componentWillMount() {
     const { data, axis, layout, line } = this.props;
-    const { axis: axisConfig, color, lineConfig, padding, dotable} = this.state
+    const { axis: axisConfig, color, lineConfig, padding} = this.state
     // 向axis中添加x,y轴数据,默认以第一个数据项为X轴
     const keys = Object.keys(data[0])
     axisConfig.X = axis?( axis.x ? axis.x : keys[0]) : keys[0]
@@ -46,11 +45,6 @@ class LineChart extends Component {
       if(layout.height) {
         this.setState({
           height:layout.height
-        })
-      }
-      if (layout.dot !== undefined) {
-        this.setState({
-          dotable:layout.dot
         })
       }
       if(layout.slider !== undefined) {
@@ -86,7 +80,6 @@ class LineChart extends Component {
     function setlineData() {
       const { width, linecap, linejoin, unit } = lineConfig
       for (let i = 0; i < lineData.length; i += 1){
-        lineData[i].dot = layout.dotable? layout.dotable : dotable
         lineData[i].width = width
         lineData[i].click = false
         lineData[i].linecap = linecap
@@ -107,7 +100,6 @@ class LineChart extends Component {
               if (line[n].width) lineData[i].width = line[n].width
               if (line[n].color) lineData[i].color = line[n].color
               if (line[n].linecap) lineData[i].linecap = line[n].linecap
-              if (line[n].dot !== undefined) lineData[i].dot = line[n].dot
               if (line[n].linejoin) lineData[i].linejoin = line[n].linejoin
             }
           }
@@ -128,7 +120,7 @@ class LineChart extends Component {
 
 
   componentDidMount() {
-    const { data, padding, height, width,axis,lineData, tooltiplineable,sliderable } = this.state;
+    const { data, padding, height, width,axis,lineData, tooltiplineable,tooltipable,sliderable } = this.state;
     const pathwidth = width - padding.left - padding.right
     const pathheight = height - padding.top - padding.bottom
     const svg = d3.select("#svg")
@@ -137,7 +129,7 @@ class LineChart extends Component {
     for (let i = 0; i < data.length; i += 1){
       scaleXData.push(data[i][axis.X])
     }
-    console.log(scaleXData)
+
     // 放大器
     const scaleX = d3.scalePoint()
       .domain(scaleXData)
@@ -172,21 +164,142 @@ class LineChart extends Component {
       })
     for (let i = 0; i < lineData.length; i += 1){
       this.drawLine(lineData[i], svg, lineGengeator, padding)
-      if (lineData[i].dot) {
-        this.drowLineCircle(lineData[i],svg,scaleX,scaleY,padding)
-      }
     }
 
     //tooltipline**********************************************************************
+    // 是否显示tooltipline
     let tooltipLine = {}
     if (tooltiplineable) {
       tooltipLine = this.tooltipLine(pathheight)
+    }
+    // 是否显示tooltip
+    let tooltip = {}
+    if (tooltipable) {
+      tooltip = this.setTooltip(this)
+    }
+    if (tooltiplineable || tooltipable) {
+      this.setSvgMouse(svg,tooltipLine,tooltip,this,padding,pathwidth,pathheight,tooltiplineable,tooltipable)
     }
     if (sliderable) {
       this.setSlider(padding,pathwidth,height,this,axisX,axisY,axis)
     }
   }
 
+
+  setSvgMouse = (svg,tooltipLine,tooltip,linechart,padding,pathwidth,pathheight,tooltiplineable, tooltipable) => {
+    svg.on("mousemove", function () {
+      const m = d3.mouse(this)
+      if (m[0] - padding.left > 0 && m[0] - padding.left < pathwidth && m[1] > padding.top && m[1] < pathheight + padding.top) {
+        const { renderData, renderlineData,axis } = linechart.state
+        const roundX = Math.round((m[0] - padding.left) / (pathwidth / (renderData.length - 1)))
+        const pathX = roundX * (pathwidth / (renderData.length - 1))
+        const xpoint = d3.scaleLinear()
+        .domain([0,pathwidth])
+        .range([0, renderData.length - 1])
+        const countX = Math.round(xpoint(pathX))
+        if (tooltiplineable) {
+          tooltipLine.style("opacity",1)
+          tooltipLine.attr("transform", `translate(${padding.left + pathX},${padding.top})`)
+        }
+        if (tooltipable) {
+          tooltip.select("#title")
+              .text(`${renderData[countX][axis.X]}`)
+          for (let i = 0; i < renderlineData.length; i += 1){
+            // 将选中区域数据添加到toolTip
+            tooltip.select(`#${renderlineData[i].name}key`)
+              .text(`${renderlineData[i].name}:`)
+            tooltip.select(`#${renderlineData[i].name}val`)
+            .text(`${renderlineData[i].data[countX]}${renderlineData[i].unit}`)
+          }
+          // toolTip 跟随鼠标并限制在SVG区域
+          const tool = document.getElementById("tooltip")
+          if (m[0] > padding.left&& m[0]<(pathwidth+padding.left)-(tool.offsetWidth+15)) {
+            tooltip.style("left",`${m[0]+15}px`)
+          } else {
+            tooltip.style("left",`${m[0]-15-tool.offsetWidth}px`)
+          }
+          if (m[1] > padding.top&& m[1]<(pathheight+padding.top)-(tool.offsetHeight+15)) {
+            tooltip.style("top",`${m[1]+15}px`)
+          } else {
+            tooltip.style("top",`${m[1]-15-tool.offsetHeight}px`)
+          }
+          tooltip.style("visibility","visible")
+        }
+      } else {
+        tooltipLine.style("opacity", 0)
+        tooltip.style("visibility","hidden")
+      }
+    })
+    .on("mouseout", function () {
+      if (tooltiplineable) {
+        tooltipLine.style("opacity",0)
+      }
+      if (tooltipable) {
+        tooltip.style("visibility","hidden")
+      }
+    })
+  }
+
+
+  setTooltip = (linechart) => {
+    const { renderlineData:data } = linechart.state
+    const tooltip = d3.select("#linechart")
+      .append("div")
+      .attr("id","tooltip")
+      .style("position", "absolute")
+      .style("background-color", "rgba(255, 255, 255, 0.9)")
+      .style("box-shadow", "rgb(174, 174, 174) 0px 0px 10px")
+      .style("border-radius","3px")
+      .style("padding", "10px 10px 6px 10px")
+      .style("color", "rgb(87, 87, 87)")
+      .style("font-size","12px")
+      .style("line-height","20px")
+      .style("visibility","hidden")
+      .style("opacity", 1)
+
+    tooltip.append("div")
+      .attr("id", "title")
+      .style("text-align", "left")
+      .style("margin-bottom","4px")
+
+    const ul = tooltip.append("div")
+      .style("margin", "0px")
+      .style("padding","0px")
+
+    for (let i = 0; i < data.length; i += 1){
+      const tip = ul.append("div")
+        .attr("id", `${data[i].name}`)
+        .style("text-align"," left")
+
+      const name = tip.append("div")
+        .style("display", "inline-block")
+        .style("text-align"," left")
+
+      const dot = name.append("div")
+        .style("display", "inline-block")
+        .style("width", "8px")
+        .style("height","20px")
+        dot.append("div")
+        .style("display", "inline-block")
+        .style("border-radius", "50%")
+        .style("background-color", data[i].color)
+        .style("margin-right", "0px")
+        .style("padding-right", "0px")
+        .style("width", "8px")
+        .style("height","8px")
+        .attr("id", `${data[i].name}dot`)
+      name.append("div")
+        .style("display", "inline-block")
+        .style("margin-left","5px")
+        .attr("id", `${data[i].name}key`)
+      tip.append("div")
+        .style("display", "inline-block")
+        .attr("id", `${data[i].name}val`)
+        .style("margin-left", "30px")
+        .style("float","right")
+    }
+    return tooltip
+  }
 
 
   setSlider = (padding, pathwidth, height, linechart,axisX,axisY,axis) => {
@@ -247,7 +360,6 @@ class LineChart extends Component {
       const roomX = Math.ceil(unScaleX(x - padding.left))
       const roomY = Math.floor(unScaleX(y - padding.left))
       const newData = data.slice(roomX, roomY + 1)
-      console.log(lineData, newData)
       const newScaleX = []
       for (let i = 0; i < newData.length; i += 1){
         newScaleX.push(newData[i][axis.X])
@@ -345,7 +457,6 @@ class LineChart extends Component {
       y = dragY
       dragEnd()
     })
-
     const slider = d3.select("#linechart")
       .append("div")
       .attr("id","slider")
@@ -395,8 +506,6 @@ class LineChart extends Component {
       .style("cursor", "ew-resize")
       .call(dragy)
   }
-
-
   tooltipLine = (pathheight) => {
     const tooltipLine = d3.select("#svg")
     .append("path")
@@ -407,36 +516,6 @@ class LineChart extends Component {
     .style("opacity",0)
     return tooltipLine
   }
-
-  drowLineCircle = (linedata, svg, scaleX, scaleY, padding ) =>{
-    svg.selectAll(`circle${linedata.name}`)
-          .data(linedata.data)
-          .enter()
-          .append("circle")
-          .classed(`${linedata.name}`, true)
-          .attr("class",`${linedata.name}`)
-          .attr("id", function (d,i) {
-            return `${linedata.name}${i}`
-          })
-          .attr("data", function (d) {
-              return d
-            })
-          .attr("cx", function (d,i) {
-            return scaleX(i)
-          })
-          .attr("cy", function(d) {
-            return scaleY(d)
-          })
-          .attr("r", 3)
-          .attr("stroke", "white")
-          .attr("stroke-width", 1)
-          .attr("fill","#ffffff")
-          .attr("transform", `translate(${padding.left},${padding.top})`)
-          .transition()
-          .duration(1000)
-          .attr("fill", linedata.color)
-  }
-
   drawLine = (linedata, svg, lineGengeator, padding) => {
     svg.append("path")
       .attr("id", linedata.name)
@@ -456,13 +535,7 @@ class LineChart extends Component {
 
 
   render() {
-    const { width, height, padding } = this.state
-    console.log(padding)
-    // const linepath = {}
-    // const tooltip = {}
-    // const tooltipLine = {}
-    // const slider = {}
-    // const legend ={}
+    const { width, height} = this.state
     return (
       <div id="linechart" style={{ display: "inline-block", position: "relative" }} >
         <svg id="svg" width={width} height={height} />

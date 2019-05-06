@@ -20,27 +20,27 @@ class App extends Component {
       tooltip: true,
       tooltipline: true,
       slider:true,
-      legend:false,
+      legend:true,
       dot: true,
     }
     const line = [
-      {
-        name: "A",
-        dot: false,
-        color: "#008ffa",
-        width: 2,
-        linecap: "square",
-        linejoin: "miter",
-        unit:"元"
-      }, {
-        name: "C",
-        dot: false,
-        // color: "#008ffa",
-        width: 2,
-        linecap: "square",
-        linejoin: "round",
-        unit:"元"
-      }
+      // {
+      //   name: "A",
+      //   dot: false,
+      //   color: "#008ffa",
+      //   width: 2,
+      //   linecap: "square",
+      //   linejoin: "miter",
+      //   unit:"元"
+      // }, {
+      //   name: "C",
+      //   dot: false,
+      //   // color: "#008ffa",
+      //   width: 2,
+      //   linecap: "square",
+      //   linejoin: "round",
+      //   unit:"元"
+      // }
     ]
     return (
       <div className="App">
