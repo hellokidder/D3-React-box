@@ -126,7 +126,7 @@ class LineChart extends Component {
     const { data, padding, height, width,axis,lineData, tooltiplineable,tooltipable,legendable,sliderable } = this.state;
     const pathwidth = width - padding.left - padding.right
     const pathheight = height - padding.top - padding.bottom
-    const svg = d3.select("#svg")
+    const svg = d3.select("#linesvg")
     const minMaxXY = findMinMax(data, axis)
     const scaleXData = []
     for (let i = 0; i < data.length; i += 1){
@@ -647,7 +647,7 @@ class LineChart extends Component {
       .call(dragy)
   }
   tooltipLine = (pathheight) => {
-    const tooltipLine = d3.select("#svg")
+    const tooltipLine = d3.select("#linesvg")
     .append("path")
     .style("fill", "none")
     .style("stroke", "#dddddd")
@@ -673,7 +673,7 @@ class LineChart extends Component {
     const { width, height} = this.state
     return (
       <div id="linechart" style={{ display: "inline-block", position: "relative" }} >
-        <svg id="svg" width={width} height={height} />
+        <svg id="linesvg" width={width} height={height} />
       </div>
     );
   }

@@ -19,6 +19,25 @@ const setLineData = (len) => {
 
 export const lineData = setLineData(10);
 
+const setBarData = (len) => {
+  const datas = []
+  for (let i = 0; i < len; i += 1){
+    const data = {}
+    data.data = Math.floor(Math.random() * 100)
+    data.name = `${i}X`
+    // data.B = Math.floor(Math.random() * 20)
+    // data.C = Math.floor(Math.random() * 5)
+    // data.D = Math.floor(Math.random() * 100)
+    // data.E = Math.floor(Math.random() * 100)
+    // data.F = Math.floor(Math.random() * 100)
+    // data.G = Math.floor(Math.random() * 100)
+    // data.H = Math.floor(Math.random() * 100)
+    datas.push(data)
+  }
+  return datas
+}
+export const barData = setBarData(10);
+
 export const lineConfig = {
   width:1000,
   height: 500,
