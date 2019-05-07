@@ -16,12 +16,12 @@ class Pie extends Component {
     const g = svg.append('g')
       .attr('transform', 'translate(' + marge.top + ',' + marge.left + ')')
 
-    const dataSet = [100, 200, 500]
+    const dataSet = [100, 200, 500,10,700]
     const colorScale = d3.scaleOrdinal()
         .domain(d3.range(dataSet.length))
       .range(d3.schemeCategory10)
 
-    const innerRadius = 0
+    const innerRadius = 50
     const outerRadius = 100
     const arc_generator = d3.arc()
         .innerRadius(innerRadius)

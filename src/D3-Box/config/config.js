@@ -17,7 +17,7 @@ const setLineData = (len) => {
   return datas
 }
 
-export const lineData = setLineData(10);
+export const lineData = setLineData(11);
 
 const setBarData = (len) => {
   const datas = []
