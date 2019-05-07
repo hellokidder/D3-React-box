@@ -348,8 +348,12 @@ class LineChart extends Component {
           tooltip.style("visibility","visible")
         }
       } else {
-        tooltipLine.style("opacity", 0)
-        tooltip.style("visibility","hidden")
+        if (tooltiplineable) {
+          tooltipLine.style("opacity",0)
+        }
+        if (tooltipable) {
+          tooltip.style("visibility","hidden")
+        }
       }
     })
     .on("mouseout", function () {

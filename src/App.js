@@ -11,7 +11,7 @@ class App extends Component {
     const csvt = testCsvData();
     const csv = d3.csvParse(csvt)
     const axis = {
-      x: "T",
+      x: "A",
       y:["A", "B", "C"],
     }
     const layout = {
@@ -23,31 +23,40 @@ class App extends Component {
       legend:true,
     }
     const line = [
-      // {
-      //   name: "A",
-      //   dot: false,
-      //   color: "#008ffa",
-      //   width: 2,
-      //   linecap: "square",
-      //   linejoin: "miter",
-      //   unit:"元"
-      // }, {
-      //   name: "C",
-      //   dot: false,
-      //   // color: "#008ffa",
-      //   width: 2,
-      //   linecap: "square",
-      //   linejoin: "round",
-      //   unit:"元"
-      // }
+      {
+        name: "A",
+        dot: false,
+        color: "#008ffa",
+        width: 2,
+        linecap: "round",
+        linejoin: "bevel",
+        unit:"元"
+      }, {
+        name: "B",
+        dot: false,
+        // color: "#008ffa",
+        width: 2,
+        linecap: "butt",
+        linejoin: "round",
+        unit:"元"
+      }, {
+        name: "C",
+        dot: false,
+        // color: "#008ffa",
+        width: 2,
+        linecap: "square",
+        linejoin: "miter",
+        unit:"元"
+      }
     ]
+    console.log(lineData)
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
-        <LineChart data={lineData}/>
+        <LineChart data={lineData} axis={axis} line={line}/>
       </div>
     );
   }
