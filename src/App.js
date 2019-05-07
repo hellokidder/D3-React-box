@@ -47,7 +47,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
-        <LineChart data={lineData} axis={axis} line={line} layout={layout}/>
+        <LineChart data={lineData}/>
       </div>
     );
   }

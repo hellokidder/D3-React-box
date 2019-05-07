@@ -21,14 +21,14 @@ class LineChart extends Component {
       width: 2,
       linecap: "round",
       linejoin:"round",
-      unit:"yuan"
+      unit:""
       },
     axis: {}
   };
 
   componentWillMount() {
     const { data, axis, layout, line } = this.props;
-    const { axis: axisConfig, color, lineConfig, padding} = this.state
+    const { axis: axisConfig, color, lineConfig, padding,legendable,sliderable} = this.state
     // 向axis中添加x,y轴数据,默认以第一个数据项为X轴
     const keys = Object.keys(data[0])
     axisConfig.X = axis?( axis.x ? axis.x : keys[0]) : keys[0]
@@ -67,11 +67,14 @@ class LineChart extends Component {
           tooltiplineable:layout.tooltipline
         })
       }
+      if(layout.slider) padding.bottom += 30
+      if(layout.legend) padding.bottom += 20
     }
 
+    if(sliderable) padding.bottom += 30
+    if(legendable) padding.bottom += 20
 
-    if(layout.slider) padding.bottom += 30
-    if(layout.legend) padding.bottom += 20
+
 
 
     //*********************************************************** */
@@ -129,7 +132,6 @@ class LineChart extends Component {
     for (let i = 0; i < data.length; i += 1){
       scaleXData.push(data[i][axis.X])
     }
-
     // 放大器
     const scaleX = d3.scalePoint()
       .domain(scaleXData)
@@ -655,16 +657,11 @@ class LineChart extends Component {
       .attr("id", linedata.name)
       .style("fill", "none")
       .style("stroke", linedata.color)
-      .style("stroke-dasharray", 1000000)
       .style("stroke-width", linedata.width)
       .style("stroke-linecap",linedata.linecap)
       .style("stroke-linejoin",linedata.linejoin)
       .attr("d",  lineGengeator(linedata.data))
       .attr("transform", `translate(${padding.left},${padding.top})`)
-      .attr("stroke-dashoffset", 1000000)
-      .transition()
-      .duration(10000)
-      .attr("stroke-dashoffset", 0)
   }
 
 
