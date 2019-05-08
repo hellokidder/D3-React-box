@@ -15,8 +15,8 @@ class LineChart extends Component {
     color: ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"],
     tooltipable: true,
     tooltiplineable: true,
-    legendable: false,
-    sliderable: false,
+    legendable: true,
+    sliderable: true,
     lineConfig : {
       width: 2,
       linecap: "round",
@@ -158,6 +158,7 @@ class LineChart extends Component {
       .call(x)
   // 折线生成×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
     const lineGengeator = d3.line()
+    .curve(d3.curveCardinal)
       .x(function (d,i) {
         return xpoint(i)
       })

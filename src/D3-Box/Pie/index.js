@@ -6,8 +6,8 @@ class Pie extends Component {
   componentDidMount() {
     // const { data } = this.props
     const marge = { top: 160, bottom: 60, left: 160, right: 60 }
-    const width = 1000
-    const height = 1000
+    const width = 300
+    const height = 300
     const svg = d3.select("#Pie")
       .append('svg')
       .attr("width", width)
@@ -16,7 +16,7 @@ class Pie extends Component {
     const g = svg.append('g')
       .attr('transform', 'translate(' + marge.top + ',' + marge.left + ')')
 
-    const dataSet = [100, 200, 500,10,700]
+    const dataSet = [100, 200, 500,700]
     const colorScale = d3.scaleOrdinal()
         .domain(d3.range(dataSet.length))
       .range(d3.schemeCategory10)
@@ -24,6 +24,9 @@ class Pie extends Component {
     const innerRadius = 50
     const outerRadius = 100
     const arc_generator = d3.arc()
+      .padAngle(.1)
+      .padRadius(20)
+      .cornerRadius(4)
         .innerRadius(innerRadius)
       .outerRadius(outerRadius)
 
