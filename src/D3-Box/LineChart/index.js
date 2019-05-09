@@ -150,7 +150,14 @@ class LineChart extends Component {
     const axisY = svg.append("g")
     .attr("id","axisY")
     .attr("transform", `translate(${padding.left},${padding.top})`)
-    .call(y)
+      .call(y)
+      .append("text")
+      .attr("fill", "#000")
+      .attr("transform", "rotate(-90)")
+      .attr("y",6)
+      .attr("dy", "0.9em")
+      .attr("text-anchor", "end")
+      .text("hello kidder!");
     // X轴
     const axisX = svg.append("g")
     .attr("id","axisX")

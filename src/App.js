@@ -133,9 +133,9 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
-        {/* <LineChart data={lineData}/>
-        <Pie />
-        <BarChart data={barData} tooltipable={true}/> */}
+        <LineChart data={lineData}/>
+        {/* <Pie /> */}
+        {/* <BarChart data={barData} tooltipable={true}/> */}
         {/* <Tree data={b} /> */}
         <Pack />
       </div>
