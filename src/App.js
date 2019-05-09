@@ -9,6 +9,7 @@ import Tree from './D3-Box/Tree'
 // import Line from './D3-Box/Line'
 import LineChart from './D3-Box/LineChart'
 import BarChart from './D3-Box/BarChart'
+import Pack from './D3-Box/Pack'
 class App extends Component {
 
   render() {
@@ -100,16 +101,43 @@ class App extends Component {
   //    }
   //   ]
   //  }
+    // const b= {
+    //   "name": "A1",
+    //   "children": [
+    //     {
+    //       "name": "B1",
+    //       "children": [
+    //         {
+    //           "name": "C1",
+    //           "value": 100
+    //         },
+    //         {
+    //           "name": "C2",
+    //           "value": 300
+    //         },
+    //         {
+    //           "name": "C3",
+    //           "value": 200
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       "name": "B2",
+    //       "value": 200
+    //     }
+    //   ]
+    // }
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
-        <LineChart data={lineData}/>
+        {/* <LineChart data={lineData}/>
         <Pie />
-        {/* <Tree data={a}/> */}
-        <BarChart data={barData} tooltipable={true}/>
+        <BarChart data={barData} tooltipable={true}/> */}
+        {/* <Tree data={b} /> */}
+        <Pack />
       </div>
     );
   }

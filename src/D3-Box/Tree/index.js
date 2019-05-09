@@ -24,6 +24,8 @@ class Tree extends Component {
       return d.value;
     });
 
+    console.log(hierarchyData)
+
   //创建一个树状图
   var tree = d3.tree()
     .size([height,width-200])
@@ -39,8 +41,8 @@ class Tree extends Component {
   var links = treeData.links();
 
   //输出节点和边
-  // console.log(nodes);
-  // console.log(links);
+  console.log(nodes);
+  console.log(links);
 
   //创建一个贝塞尔生成曲线生成器
   var Bézier_curve_generator = d3.linkHorizontal()
@@ -60,7 +62,7 @@ class Tree extends Component {
       return Bézier_curve_generator({source:start,target:end});
     })
     .attr("fill","none")
-    .attr("stroke","yellow")
+    .attr("stroke","#585858")
     .attr("stroke-width",1);
 
   //绘制节点和文字
@@ -85,7 +87,7 @@ class Tree extends Component {
 
   //文字
   gs.append("text")
-    .attr("x",function(d){
+    .attr("x", function (d) {
       return d.children?-40:8;
     })
     .attr("y",-5)
