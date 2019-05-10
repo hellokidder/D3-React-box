@@ -12,7 +12,7 @@ class LineChart extends Component {
     width:1000,
     height: 500,
     padding: { top: 40, left: 45, right: 40, bottom: 40 },
-    color: ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"],
+    color:  ["#1890FF", "#2FC25B", "#FACC14", "#223273", "#8543E0","#13C2C2","#3436C7","#F04864"],
     tooltipable: true,
     tooltiplineable: true,
     legendable: true,
