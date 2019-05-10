@@ -81,10 +81,35 @@ const line = [
 
 ### 属性
 
-- data
-- tooltipable
+- data(必填)
+- layout
 
-### data:数组
+### data(必填)
 
-### tooltipable: boolean
+数据结构：数组嵌套对象，name为X轴变量
 
+```javascript
+const data =[{data: 24, name: "0X"},
+{data: 47, name: "1X"},
+{data: 17, name: "2X"},
+{data: 14, name: "3X"},
+{data: 29, name: "4X"},
+{data: 33, name: "5X"},
+{data: 29, name: "6X"},
+{data: 21, name: "7X"},
+{data: 64, name: "8X"},
+{data: 56, name: "9X"}]
+```
+
+### layout
+
+数据结构：指定Bar的配置，没有配置默认参数为下方代码
+
+```JavaScript
+    const layout = {
+      width:1000,
+      height: 500,
+      tooltip: true,
+      barwidth: 60 ,// 默认bandwidth()三分之一
+    }
+```

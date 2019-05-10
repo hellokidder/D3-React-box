@@ -5,7 +5,7 @@ class Pie extends Component {
 
   componentDidMount() {
     // const { data } = this.props
-    const marge = { top: 160, bottom: 60, left: 160, right: 60 }
+    const padding = { top: 160, bottom: 60, left: 160, right: 60 }
     const width = 300
     const height = 300
     const svg = d3.select("#Pie")
@@ -14,7 +14,7 @@ class Pie extends Component {
       .attr("height", height)
 
     const g = svg.append('g')
-      .attr('transform', 'translate(' + marge.top + ',' + marge.left + ')')
+      .attr('transform', 'translate(' + padding.top + ',' + padding.left + ')')
 
     const dataSet = [100, 200, 500,700]
     const colorScale = d3.scaleOrdinal()

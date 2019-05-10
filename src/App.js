@@ -127,6 +127,7 @@ class App extends Component {
     //     }
     //   ]
     // }
+    console.log(barData)
     const layout = {
       width:800,
       height: 400,
@@ -135,6 +136,7 @@ class App extends Component {
       slider:true,
       legend:true,
       curve: true,//将折线转化成条柔和的曲线
+      barwidth: 40,
     }
     return (
       <div className="App">
@@ -144,7 +146,7 @@ class App extends Component {
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
         <LineChart data={lineData} layout={layout} />
         {/* <Pie /> */}
-        {/* <BarChart data={barData} tooltipable={true}/> */}
+        <BarChart data={barData} layout={layout}/>
         {/* <Tree data={b} /> */}
         <Pack />
       </div>

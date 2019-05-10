@@ -7,24 +7,41 @@ class BarChart extends Component {
     data: [],
     width:1000,
     height: 500,
-    barwidth: 20,
+    barwidth: "default",
     padding: { top: 40, left: 45, right: 40, bottom: 40 },
     color: ["#008ffa", "#00c061", "#EE2764", "#ffcb3c", "#223670"],
     tooltipable: false,
   };
   componentWillMount() {
-    const { data, tooltipable } = this.props;
-    if (tooltipable !== undefined) {
-      this.setState({
-        tooltipable,
-      })
+    const { data, layout } = this.props;
+    if (layout !== undefined) {
+      if (layout.width) {
+        this.setState({
+          width:layout.width
+        })
+      }
+      if(layout.height) {
+        this.setState({
+          height:layout.height
+        })
+      }
+      if (layout.barwidth !== undefined) {
+        this.setState({
+          barwidth:layout.barwidth
+        })
+      }
+      if(layout.tooltip !== undefined) {
+        this.setState({
+          tooltipable:layout.tooltip
+        })
+      }
     }
     this.setState({
       data,
     })
   }
   componentDidMount() {
-    const { height, width, padding, color, tooltipable, data } = this.state
+    const { height, width, padding, color, tooltipable, data, barwidth} = this.state
     const pathheight = height - padding.top - padding.bottom
     const pathwidth = width - padding.left - padding.right
 
@@ -47,7 +64,12 @@ class BarChart extends Component {
     const x = d3.axisBottom(scaleX)
 
     // 定义 Bar 的宽度
-    const barwidth = scaleX.bandwidth() / 3
+    let barwid = 0
+    if (barwidth === "default" || barwidth> scaleX.bandwidth()) {
+      barwid = scaleX.bandwidth() / 3
+    } else {
+      barwid = barwidth
+    }
 
     // y 轴
     svg.append("g")
@@ -62,7 +84,12 @@ class BarChart extends Component {
       .call(x)
     if (tooltipable) {
       // 定义 Bar 阴影宽度
-      const backwidth = scaleX.bandwidth() * 2 / 3
+      let backwidth = 0
+      if (barwid > scaleX.bandwidth() * 2 / 3) {
+        backwidth = scaleX.bandwidth()
+      } else {
+        backwidth = scaleX.bandwidth() * 2 / 3
+      }
       // bar 阴影
       svg.selectAll(".back")
       .data(data)
@@ -90,13 +117,13 @@ class BarChart extends Component {
       .append("rect")
       .attr("transform", `translate(${padding.left+scaleX.bandwidth()/2},${padding.top})`)
       .attr("x", function(d,i){
-          return scaleX(d.name) - barwidth/2;
+          return scaleX(d.name) - barwid/2;
       } )
       .attr("y",function(d){
           return scaleY(d.data);
       })
       .attr("fill",color[0])
-      .attr("width", barwidth)
+      .attr("width", barwid)
       .attr("height", function (d) {
         return 0
       })
