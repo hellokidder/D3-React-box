@@ -132,9 +132,9 @@ class App extends Component {
       height: 400,
       tooltip: true,
       tooltipline: true,
-      slider:false,
-      legend:false,
-      // curve: false,//将折线转化成条柔和的曲线
+      slider:true,
+      legend:true,
+      curve: true,//将折线转化成条柔和的曲线
     }
     return (
       <div className="App">

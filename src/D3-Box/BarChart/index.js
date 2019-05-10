@@ -96,7 +96,12 @@ class BarChart extends Component {
           return scaleY(d.data);
       })
       .attr("fill",color[0])
-      .attr("width", barwidth )
+      .attr("width", barwidth)
+      .attr("height", function (d) {
+        return 0
+      })
+      .transition()
+      .duration(1000)
       .attr("height", function (d) {
         return pathheight-scaleY(d.data);
       });

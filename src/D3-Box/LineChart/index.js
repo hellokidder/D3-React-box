@@ -249,7 +249,7 @@ class LineChart extends Component {
           })
       }
     function renderClick() {
-      const { renderLineData,renderData,axis } = linechart.state
+      const { renderLineData,renderData,axis,curve } = linechart.state
       const newAxis = {}
       newAxis.X = axis.X
       newAxis.Y = []
@@ -276,6 +276,9 @@ class LineChart extends Component {
         .y(function (d) {
           return scaleY(d)
         })
+      if (curve) {
+        newlineGengeator.curve(d3.curveCardinal)
+      }
       for (let i = 0; i < renderLineData.length; i += 1){
         if (!renderLineData[i].click) {
           d3.select(`#${renderLineData[i].name}`)
@@ -498,7 +501,7 @@ class LineChart extends Component {
         sliderLeft.attr("x", x - 3)
         sliderRight.attr("x", y - 3)
       }
-      const { data, lineData, renderLineData } = linechart.state
+      const { data, lineData, renderLineData, curve } = linechart.state
       const　unScaleX = d3.scaleLinear()
       .domain([0,pathwidth])
       .range([0, data.length - 1])
@@ -538,6 +541,9 @@ class LineChart extends Component {
       .y(function (d) {
         return scaleY(d)
       })
+      if (curve) {
+        newlineGengeator.curve(d3.curveCardinal)
+      }
       axisX.transition()
       .duration(1000)
         .call(axisx)
@@ -557,8 +563,8 @@ class LineChart extends Component {
         if (!renderLineData[i].click) {
           d3.select(`#${lineData[i].name}`)
           .transition()
-          .duration(1000)
-          .attr("d",newlineGengeator(lineData[i].data.slice(roomX, roomY + 1)))
+            .duration(1000)
+            .attr("d", newlineGengeator(lineData[i].data.slice(roomX, roomY + 1)))
         }
       }
       linechart.setState({
