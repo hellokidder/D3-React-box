@@ -127,13 +127,22 @@ class App extends Component {
     //     }
     //   ]
     // }
+    const layout = {
+      width:800,
+      height: 400,
+      tooltip: true,
+      tooltipline: true,
+      slider:false,
+      legend:false,
+      // curve: false,//将折线转化成条柔和的曲线
+    }
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
-        <LineChart data={lineData}/>
+        <LineChart data={lineData} layout={layout} />
         {/* <Pie /> */}
         {/* <BarChart data={barData} tooltipable={true}/> */}
         {/* <Tree data={b} /> */}

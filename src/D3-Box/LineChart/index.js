@@ -17,6 +17,7 @@ class LineChart extends Component {
     tooltiplineable: true,
     legendable: true,
     sliderable: true,
+    curve: false,
     lineConfig : {
       width: 2,
       linecap: "round",
@@ -65,6 +66,11 @@ class LineChart extends Component {
       if (layout.tooltipline !== undefined) {
         this.setState({
           tooltiplineable:layout.tooltipline
+        })
+      }
+      if(layout.curve !== undefined) {
+        this.setState({
+          curve:layout.curve
         })
       }
       if(layout.slider) padding.bottom += 30
@@ -123,7 +129,7 @@ class LineChart extends Component {
 
 
   componentDidMount() {
-    const { data, padding, height, width,axis,lineData, tooltiplineable,tooltipable,legendable,sliderable } = this.state;
+    const { data, padding, height, width,axis,lineData, tooltiplineable,tooltipable,legendable,sliderable, curve } = this.state;
     const pathwidth = width - padding.left - padding.right
     const pathheight = height - padding.top - padding.bottom
     const svg = d3.select("#linesvg")
@@ -151,13 +157,13 @@ class LineChart extends Component {
     .attr("id","axisY")
     .attr("transform", `translate(${padding.left},${padding.top})`)
       .call(y)
-      .append("text")
-      .attr("fill", "#000")
-      .attr("transform", "rotate(-90)")
-      .attr("y",6)
-      .attr("dy", "0.9em")
-      .attr("text-anchor", "end")
-      .text("hello kidder!");
+      // .append("text")
+      // .attr("fill", "#000")
+      // .attr("transform", "rotate(-90)")
+      // .attr("y",6)
+      // .attr("dy", "0.9em")
+      // .attr("text-anchor", "end")
+      // .text("hello kidder!");
     // X轴
     const axisX = svg.append("g")
     .attr("id","axisX")
@@ -165,13 +171,15 @@ class LineChart extends Component {
       .call(x)
   // 折线生成×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
     const lineGengeator = d3.line()
-    .curve(d3.curveCardinal)
       .x(function (d,i) {
         return xpoint(i)
       })
       .y(function (d) {
         return scaleY(d)
       })
+      if (curve) {
+        lineGengeator.curve(d3.curveCardinal)
+      }
     for (let i = 0; i < lineData.length; i += 1){
       this.drawLine(lineData[i], svg, lineGengeator, padding)
     }

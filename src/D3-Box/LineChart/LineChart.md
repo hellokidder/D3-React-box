@@ -47,6 +47,7 @@ const data = [{T: "0X", A: 38, B: 2, C: 0},
       tooltipline: true,
       slider:false,
       legend:false,
+      curve:false,//将折线转化成条柔和的曲线
     }
 ```
 
