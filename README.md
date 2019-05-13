@@ -113,3 +113,34 @@ const data =[{data: 24, name: "0X"},
       barwidth: 60 ,// 默认bandwidth()三分之一
     }
 ```
+
+## PieChart
+
+### 属性
+
+- data(必填)
+- layout
+
+### data(必填)
+
+数据结构：数组嵌套对象
+
+```javascript
+const data =[{data: 91, name: "事例0"}，
+{data: 82, name: "事例3"}，
+{data: 79, name: "事例2"}，
+{data: 62, name: "事例1"}，
+{data: 59, name: "事例4"}]
+```
+
+### layout
+
+数据结构：指定pie的配置，没有配置默认参数为下方代码
+
+```JavaScript
+    const layout = {
+      width:600,
+      height: 400,
+      legend:false,
+    }
+```

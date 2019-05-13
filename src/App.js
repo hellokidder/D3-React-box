@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import logo from './logo.svg';
 import './App.css';
 import { barData, lineData, pieData} from './D3-Box/config/config'
-import Pie from './D3-Box/Pie'
+import PieChart from './D3-Box/PieChart'
 import Tree from './D3-Box/Tree'
 // import {testCsvData} from './D3-Box/utils/utils'
 // import Line from './D3-Box/Line'
@@ -127,14 +127,14 @@ class App extends Component {
     //     }
     //   ]
     // }
-    console.log(barData)
+    console.log(pieData)
     const layout = {
       width:600,
       height: 400,
       // tooltip: true,
       // tooltipline: true,
       // slider:true,
-      legend:true,
+      legend:false,
       // curve: true,//将折线转化成条柔和的曲线
       // barwidth: 40,
     }
@@ -145,7 +145,7 @@ class App extends Component {
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
         {/* <LineChart data={lineData} layout={layout} /> */}
-        <Pie data={pieData} layout={layout}/>
+        <PieChart data={pieData} layout={layout}/>
         {/* <BarChart data={barData} layout={layout}/> */}
         {/* <Tree data={b} /> */}
         {/* <Pack /> */}

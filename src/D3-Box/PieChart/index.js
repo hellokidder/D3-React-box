@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 
-class Pie extends Component {
+class PieChart extends Component {
   state = {
     data: [],
     width:1000,
@@ -66,23 +66,25 @@ class Pie extends Component {
         .text(function () {
         return `${data[i].name}`
         })
-        .on("mouseover",function () {
-          d3.select(`#pie${data[i].data}${data[i].name}`)
-          .transition()
+        .on("mouseover", function () {
+          if (!data[i].click) {
+            d3.select(`#pie${data[i].data}${data[i].name}`)
+            .transition()
+              .duration(500)
+              .style("opacity",0.5)
+            centerG.select(`#title`)
+            .transition()
             .duration(500)
-            .style("opacity",0.5)
-          centerG.select(`#title`)
-          .transition()
-          .duration(500)
-          .text(function () {
-            return data[i].name
-          })
-          centerG.select(`#value`)
-          .transition()
-          .duration(500)
-          .text(function () {
-            return data[i].data
-          })
+            .text(function () {
+              return data[i].name
+            })
+            centerG.select(`#value`)
+            .transition()
+            .duration(500)
+            .text(function () {
+              return data[i].data
+            })
+          }
         })
         .on("mouseout", function () {
           d3.select(`#pie${data[i].data}${data[i].name}`)
@@ -102,6 +104,7 @@ class Pie extends Component {
           .text(function () {
             let sum = 0
             for (let i = 0; i < data.length; i += 1){
+              if(!data[i].click)
               sum = sum + data[i].data
             }
             return sum
@@ -116,8 +119,8 @@ class Pie extends Component {
             }
           }
           gs.remove()
-          centerG.remove()
           legend.remove()
+          centerG.remove()
           pieChart.drawPie(newData)
         })
     }
@@ -160,7 +163,6 @@ class Pie extends Component {
         return Math.round(d.data/sum*100)
       })(data)
 
-    console.log(data,"??",arcData)
     const gs = g.selectAll('.g')
       .data(arcData)
       .enter()
@@ -172,9 +174,9 @@ class Pie extends Component {
       .attr("id", function (d) {
         return `pie${d.data.data}${d.data.name}`
       })
-      .attr("d", function (d) {
-        return arc_generator(d)
-      })
+      // .attr("d", function (d) {
+      //   return arc_generator(d)
+      // })
       .on("mouseover", function (d,i) {
       d3.select(this)
         .transition()
@@ -235,18 +237,19 @@ class Pie extends Component {
     })
 
     //点击Legend重新渲染存在BUG
-    // arc.transition().duration(500).attrTween('d',function(d){
-    //   var compute = d3.interpolate(d.startAngle, d.endAngle);
-    //   return function(t){
-    //         d.endAngle = compute(t);
-    //         return arc_generator(d);
-    //     }
-    // })
+    arc.transition().duration(500).attrTween('d',function(d){
+      var compute = d3.interpolate(d.startAngle, d.endAngle);
+      return function(t){
+            d.endAngle = compute(t);
+            return arc_generator(d);
+        }
+    })
 
     gs.append('text')
       .attr("id", function (d) {
         return `${d.data.name}${d.data.data}`
       })
+      .style("cursor", "default")
     .attr('transform', function(d) {
         //位置设在中心处
         return `translate(${arc_generator.centroid(d)})`
@@ -260,6 +263,33 @@ class Pie extends Component {
         value = `${d.value}%`
         return value
     })
+    .on("mouseover", function (d,i) {
+    d3.select(`#pie${d.data.data}${d.data.name}`)
+      .transition()
+      .duration(500)
+      .attr('d', function(d) {
+        return over_generator(d)
+      })
+    d3.select(`#${d.data.name}${d.data.data}`)
+      .transition()
+      .duration(500)
+      .attr('transform', function(d) {
+        //位置设在中心处
+        return `translate(${over_generator.centroid(d)})`
+      })
+    centerG.select(`#title`)
+      .transition()
+      .duration(500)
+      .text(function () {
+        return d.data.name
+      })
+    centerG.select(`#value`)
+      .transition()
+      .duration(500)
+      .text(function () {
+        return d.data.data
+      })
+  })
     const centerG = g.append('g')
 
     centerG.append('text')
@@ -275,8 +305,8 @@ class Pie extends Component {
     .attr("fill", "#000000")
     .attr("font-size",40)
     .attr('text-anchor', 'middle')
-    .attr('transform', `translate(0,20)`)
-    .text(function () {
+      .attr('transform', `translate(0,20)`)
+      .text(function (d) {
       let sum = 0
       for (let i = 0; i < data.length; i += 1){
         sum = sum + data[i].data
@@ -297,4 +327,4 @@ class Pie extends Component {
   }
 }
 
-export default Pie;
+export default PieChart;
