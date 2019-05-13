@@ -15,92 +15,92 @@ class App extends Component {
   render() {
     // const csvt = testCsvData();
     // const csv = d3.csvParse(csvt)
-  //  const a = {
-  //   "name": "flare",
-  //   "children": [
-  //    {
-  //     "name": "analytics",
-  //     "children": [
-  //      {
-  //       "name": "cluster",
-  //       "children": [
-  //        {"name": "AgglomerativeCluster", "size": 3938},
-  //        {"name": "CommunityStructure", "size": 3812},
-  //        {"name": "HierarchicalCluster", "size": 6714},
-  //        {"name": "MergeEdge", "size": 743}
-  //       ]
-  //      },
-  //      {
-  //       "name": "graph",
-  //       "children": [
-  //        {"name": "BetweennessCentrality", "size": 3534},
-  //        {"name": "LinkDistance", "size": 5731},
-  //        {"name": "MaxFlowMinCut", "size": 7840},
-  //        {"name": "ShortestPaths", "size": 5914},
-  //        {"name": "SpanningTree", "size": 3416}
-  //       ]
-  //      },
-  //      {
-  //       "name": "optimization",
-  //       "children": [
-  //        {"name": "AspectRatioBanker", "size": 7074}
-  //       ]
-  //      }
-  //     ]
-  //    },
-  //    {
-  //     "name": "animate",
-  //     "children": [
-  //      {"name": "Easing", "size": 17010},
-  //      {"name": "FunctionSequence", "size": 5842},
-  //      {
-  //       "name": "interpolate",
-  //       "children": [
-  //        {"name": "ArrayInterpolator", "size": 1983},
-  //        {"name": "ColorInterpolator", "size": 2047},
-  //        {"name": "DateInterpolator", "size": 1375},
-  //        {"name": "Interpolator", "size": 8746},
-  //        {"name": "MatrixInterpolator", "size": 2202},
-  //        {"name": "NumberInterpolator", "size": 1382},
-  //        {"name": "ObjectInterpolator", "size": 1629},
-  //        {"name": "PointInterpolator", "size": 1675},
-  //        {"name": "RectangleInterpolator", "size": 2042}
-  //       ]
-  //      },
-  //      {"name": "ISchedulable", "size": 1041},
-  //      {"name": "Parallel", "size": 5176},
-  //      {"name": "Pause", "size": 449},
-  //      {"name": "Scheduler", "size": 5593},
-  //      {"name": "Sequence", "size": 5534},
-  //      {"name": "Transition", "size": 9201},
-  //      {"name": "Transitioner", "size": 19975},
-  //      {"name": "TransitionEvent", "size": 1116},
-  //      {"name": "Tween", "size": 6006}
-  //     ]
-  //    },
-  //    {
-  //     "name": "data",
-  //     "children": [
-  //      {
-  //       "name": "converters",
-  //       "children": [
-  //        {"name": "Converters", "size": 721},
-  //        {"name": "DelimitedTextConverter", "size": 4294},
-  //        {"name": "GraphMLConverter", "size": 9800},
-  //        {"name": "IDataConverter", "size": 1314},
-  //        {"name": "JSONConverter", "size": 2220}
-  //       ]
-  //      },
-  //      {"name": "DataField", "size": 1759},
-  //      {"name": "DataSchema", "size": 2165},
-  //      {"name": "DataSet", "size": 586},
-  //      {"name": "DataSource", "size": 3331},
-  //      {"name": "DataTable", "size": 772},
-  //      {"name": "DataUtil", "size": 3322}
-  //     ]
-  //    }
-  //   ]
-  //  }
+   const a = {
+     "name": "A",
+    "children": [
+     {
+      "name": "B",
+      "children": [
+       {
+        "name": "C",
+        "children": [
+         {"name": "D", "value": 3938},
+         {"name": "E", "value": 3812},
+         {"name": "F", "value": 6714},
+         {"name": "G", "value": 743}
+        ]
+       },
+       {
+        "name": "H",
+        "children": [
+         {"name": "I", "value": 3534},
+         {"name": "J", "value": 5731},
+         {"name": "K", "value": 7840},
+         {"name": "L", "value": 5914},
+         {"name": "M", "value": 3416}
+        ]
+       },
+       {
+        "name": "N",
+        "children": [
+         {"name": "O", "value": 7074}
+        ]
+       }
+      ]
+     },
+     {
+      "name": "P",
+      "children": [
+        {
+         "name": "S",
+         "children": [
+          {"name": "T", "value": 1983},
+          {"name": "U", "value": 2047},
+          {"name": "V", "value": 1375},
+          {"name": "W", "value": 8746},
+          {"name": "X", "value": 2202},
+          {"name": "Y", "value": 1382},
+          {"name": "Z", "value": 1629},
+          {"name": "AA", "value": 1675},
+          {"name": "AB", "value": 2042}
+         ]
+        },
+       {"name": "Q", "value": 17010},
+       {"name": "R", "value": 5842},
+       {"name": "AC", "value": 1041},
+       {"name": "AD", "value": 5176},
+       {"name": "AE", "value": 449},
+       {"name": "AF", "value": 5593},
+       {"name": "AG", "value": 5534},
+       {"name": "AH", "value": 9201},
+       {"name": "AI", "value": 19975},
+       {"name": "AJ", "value": 1116},
+       {"name": "AK", "value": 6006}
+      ]
+     },
+     {
+      "name": "AL",
+      "children": [
+       {
+        "name": "AM",
+        "children": [
+         {"name": "AN", "value": 721},
+         {"name": "AO", "value": 4294},
+         {"name": "AP", "value": 9800},
+         {"name": "AQ", "value": 1314},
+         {"name": "AR", "value": 2220}
+        ]
+       },
+       {"name": "AS", "value": 1759},
+       {"name": "AT", "value": 2165},
+       {"name": "AU", "value": 586},
+       {"name": "AV", "value": 3331},
+       {"name": "AW", "value": 772},
+       {"name": "AX", "value": 3322}
+      ]
+     }
+    ]
+   }
     // const b= {
     //   "name": "A1",
     //   "children": [
@@ -129,14 +129,15 @@ class App extends Component {
     // }
     console.log(pieData)
     const layout = {
-      width:600,
-      height: 400,
+      width:800,
+      height: 1000,
       // tooltip: true,
       // tooltipline: true,
       // slider:true,
-      legend:false,
+      // legend:false,
       // curve: true,//将折线转化成条柔和的曲线
       // barwidth: 40,
+      layout:"cluster",//"tree"
     }
     return (
       <div className="App">
@@ -145,10 +146,10 @@ class App extends Component {
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
         {/* <LineChart data={lineData} layout={layout} /> */}
-        <PieChart data={pieData} layout={layout}/>
+        {/* <PieChart data={pieData} layout={layout}/> */}
         {/* <BarChart data={barData} layout={layout}/> */}
-        {/* <Tree data={b} /> */}
-        {/* <Pack /> */}
+        <Tree data={a} layout={layout}/>
+        <Pack data={a} layout={layout} />
       </div>
     );
   }

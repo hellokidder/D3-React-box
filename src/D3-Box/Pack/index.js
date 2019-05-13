@@ -4,41 +4,16 @@ import * as d3 from 'd3';
 class Pack extends Component {
 
   componentDidMount() {
-    const width = 800
-    const height = 800
+    const {data,layout} = this.props
+    const width = layout.width
+    const height = layout.height
     const padding = { top: 40,left:40, right:40,bottom:40}
-    const data = {
-      "name": "A1",
-      "children": [
-        {
-          "name": "B1",
-          "children": [
-            {
-              "name": "C1",
-              "value": 100
-            },
-            {
-              "name": "C2",
-              "value": 300
-            },
-            {
-              "name": "C3",
-              "value": 200
-            }
-          ]
-        },
-        {
-          "name": "B2",
-          "value": 200
-        }
-      ]
-    }
     const svg = d3.select("#Pack")
       .append("svg")
       .attr("width", width)
       .attr("height", height)
 
-svg.append("g")
+    const pack = svg.append("g")
     .attr("transform","translate("+padding.top+","+padding.left+")");
 
 
@@ -47,15 +22,14 @@ svg.append("g")
       return d.value;
     });
 
-
+    var color = d3.scaleSequential(d3.interpolateYlGn)
+    .domain([5, -5])
     var treeLayout = d3.pack();
-    treeLayout.size([300, 300])
-    .padding(10)
-
+    treeLayout.size([width-padding.left-padding.right, height-padding.top-padding.bottom])
+    .padding(0)
     treeLayout(root);
 
-    var nodes = d3.select('svg g')
-  .selectAll('g')
+    var nodes = pack.selectAll('g')
   .data(root.descendants())
   .enter()
   .append('g')
@@ -65,18 +39,28 @@ svg.append("g")
 
 nodes
   .append('circle')
-  .attr('r', function(d) { return d.r; })
+  .attr('r', function (d) {
+    return d.r;
+  })
+  .style("stroke", "none")
+  .style('fill', function (d) { return color(d.depth) })
 
 nodes
   .append('text')
-  .attr('dy', 4)
+  .attr('text-anchor',"middle")
+  .style('fill', "#a2a2a2")
+  .style("stroke", "none")
+  .style("font-size", function (d) {
+    console.log(d)
+    return d.r*3/5
+  })
   .text(function(d) {
     return d.children === undefined ? d.data.name : '';
   })
   }
   render() {
     return (
-      <div id="Pack">
+      <div id="Pack"  style={{ display: "inline-block", position: "relative" }} >
       </div>
     );
   }

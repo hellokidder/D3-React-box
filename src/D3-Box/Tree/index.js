@@ -4,19 +4,18 @@ import * as d3 from 'd3';
 class Tree extends Component {
 
   componentDidMount() {
-    const { data } = this.props
-    console.log(data)
-    const marge = { top: 50, bottom: 0, left: 10, right: 0 };
-    const width = 800
-    const height = 800
+    const { data, layout } = this.props
+    const padding = { top: 40, bottom: 40, left: 40, right: 40 };
+    const width = layout.width
+    const height = layout.height
 
     const svg = d3.select("#Tree")
       .append("svg")
       .attr("width", width)
-    .attr("height",height)
+      .attr("height",height)
 
     const g = svg.append("g")
-    		.attr("transform","translate("+marge.top+","+marge.left+")");
+    		.attr("transform",`translate(${padding.top},${padding.left})`);
 
     //创建一个hierarchy layout
     var hierarchyData = d3.hierarchy(data)
@@ -24,28 +23,28 @@ class Tree extends Component {
       return d.value;
     });
 
-    console.log(hierarchyData)
-
   //创建一个树状图
-  var tree = d3.tree()
-    .size([height,width-200])
+    let tree = {}
+    if (layout.layout === "tree") {
+      tree = d3.tree()
+    } else if(layout.layout === "cluster") {
+      tree = d3.cluster()
+    }
+    tree.size([height-padding.top-padding.bottom,width-padding.left-padding.right-200])
     .separation(function(a,b){
-      return (a.parent===b.parent?1:2)/a.depth;
+      return (a.parent===b.parent?1:3)/a.depth;
     })
 
-  //初始化树状图，也就是传入数据,并得到绘制树基本数据
+  //也就是传入数据,并得到绘制树基本数据
   var treeData = tree(hierarchyData);
-  // console.log(treeData);
+  console.log(treeData);
   //得到节点
   var nodes = treeData.descendants();
   var links = treeData.links();
 
-  //输出节点和边
-  console.log(nodes);
-  console.log(links);
 
   //创建一个贝塞尔生成曲线生成器
-  var Bézier_curve_generator = d3.linkHorizontal()
+  var Bezier_curve_generator = d3.linkHorizontal()
     .x(function(d) { return d.y; })
     .y(function(d) { return d.x; });
 
@@ -59,37 +58,41 @@ class Tree extends Component {
     .attr("d",function(d){
       var start = {x:d.source.x,y:d.source.y};
       var end = {x:d.target.x,y:d.target.y};
-      return Bézier_curve_generator({source:start,target:end});
+      return Bezier_curve_generator({source:start,target:end});
     })
     .attr("fill","none")
-    .attr("stroke","#585858")
+    .attr("stroke","#d0d0d0")
     .attr("stroke-width",1);
 
   //绘制节点和文字
-  //老规矩，先创建用以绘制每个节点和对应文字的分组<g>
   var gs = g.append("g")
     .selectAll("g")
     .data(nodes)
     .enter()
     .append("g")
     .attr("transform", function (d) {
-      // console.log(d)
       var cx = d.x;
       var cy= d.y;
-      return "translate("+cy+","+cx+")";
+      return `translate(${cy},${cx})`;
     });
   //绘制节点
   gs.append("circle")
     .attr("r",6)
     .attr("fill","white")
-    .attr("stroke","blue")
+    .attr("stroke", function (d) {
+      return d.children? "#F04864":"#1890FF"
+    })
     .attr("stroke-width",1);
 
   //文字
   gs.append("text")
     .attr("x", function (d) {
-      return d.children?-40:8;
+      return d.children?-8:8;
     })
+    .attr('text-anchor', function (d) {
+      return d.children?"end":"start"
+    })
+    .attr("fill","#a2a2a2")
     .attr("y",-5)
     .attr("dy",10)
     .text(function(d){
