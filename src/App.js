@@ -5,6 +5,8 @@ import './App.css';
 import { barData, lineData, pieData} from './D3-Box/config/config'
 import PieChart from './D3-Box/PieChart'
 import Tree from './D3-Box/Tree'
+import Treemap from './D3-Box/Treemap'
+import Partition from './D3-Box/Partition'
 // import {testCsvData} from './D3-Box/utils/utils'
 // import Line from './D3-Box/Line'
 import LineChart from './D3-Box/LineChart'
@@ -129,8 +131,8 @@ class App extends Component {
     // }
     console.log(pieData)
     const layout = {
-      width:800,
-      height: 1000,
+      width:1000,
+      height: 600,
       // tooltip: true,
       // tooltipline: true,
       // slider:true,
@@ -148,8 +150,10 @@ class App extends Component {
         {/* <LineChart data={lineData} layout={layout} /> */}
         {/* <PieChart data={pieData} layout={layout}/> */}
         {/* <BarChart data={barData} layout={layout}/> */}
-        <Tree data={a} layout={layout}/>
-        <Pack data={a} layout={layout} />
+        {/* <Tree data={a} layout={layout}/> */}
+        {/* <Pack data={a} layout={layout} /> */}
+        {/* <Treemap data={a} layout={layout} /> */}
+        <Partition data={a} layout={layout} />
       </div>
     );
   }

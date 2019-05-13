@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 
-class Pack extends Component {
+class Treemap extends Component {
 
   componentDidMount() {
     const {data,layout} = this.props
     const width = layout.width
     const height = layout.height
     const padding = { top: 40,left:40, right:40,bottom:40}
-    const svg = d3.select("#Pack")
+    const svg = d3.select("#treemap")
       .append("svg")
       .attr("width", width)
       .attr("height", height)
 
-    const pack = svg.append("g")
+    const treemap = svg.append("g")
     .attr("transform",`translate(${padding.top},${padding.left})`);
 
 
@@ -23,47 +23,52 @@ class Pack extends Component {
     });
 
     var color = d3.scaleSequential(d3.interpolateYlGn)
-    .domain([5, -5])
-    var treeLayout = d3.pack();
+      .domain([5, -5])
+
+    var treeLayout = d3.treemap();
     treeLayout.size([width-padding.left-padding.right, height-padding.top-padding.bottom])
-    .padding(0)
+    .paddingOuter(20)
     treeLayout(root);
 
-    var nodes = pack.selectAll('g')
+    var nodes = treemap.selectAll('g')
   .data(root.descendants())
   .enter()
   .append('g')
-      .attr('transform', function (d) { return `translate(${d.x}, ${d.y})` })
+      .attr('transform', function (d) { return `translate(${d.x0}, ${d.y0})` })
       .style('fill', "none")
       .style("stroke", "blue")
 
 nodes
-  .append('circle')
-  .attr('r', function (d) {
-    return d.r;
+.append('rect')
+.attr('width', function(d) { return d.x1 - d.x0; })
+.attr('height', function(d) { return d.y1 - d.y0; })
+.style("stroke", "black")
+  .style('fill', function (d) {
+    console.log(d)
+    return color(d.depth)
   })
-  .style("stroke", "none")
-  .style('fill', function (d) { return color(d.depth) })
 
 nodes
   .append('text')
-  .attr('text-anchor',"middle")
+  .attr('text-anchor',"start")
   .style('fill', "#a2a2a2")
   .style("stroke", "none")
-  .style("font-size", function (d) {
-    console.log(d)
-    return d.r*3/5
-  })
+  .attr('dx', 4)
+  .attr('dy', 14)
+  // .style("font-size", function (d) {
+  //   console.log(d)
+  //   return d.r*3/5
+  // })
   .text(function(d) {
-    return d.children === undefined ? d.data.name : '';
+    return d.data.name
   })
   }
   render() {
     return (
-      <div id="Pack"  style={{ display: "inline-block", position: "relative" }} >
+      <div id="treemap"  style={{ display: "inline-block", position: "relative" }} >
       </div>
     );
   }
 }
 
-export default Pack;
+export default Treemap;
