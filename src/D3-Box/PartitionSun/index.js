@@ -22,8 +22,8 @@ class PartitionSun extends Component {
       return d.value;
     });
 
-    var color = d3.scaleSequential(d3.interpolateYlGn)
-      .domain([5, -5])
+    var color = d3.scaleSequential(d3.interpolateOrRd)
+      .domain([5, 0])
 
     const radius = (height-padding.top-padding.bottom)/2
     var partitionLayout = d3.partition();

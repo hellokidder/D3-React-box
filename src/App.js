@@ -13,6 +13,7 @@ import PartitionSun from './D3-Box/PartitionSun'
 import LineChart from './D3-Box/LineChart'
 import BarChart from './D3-Box/BarChart'
 import Pack from './D3-Box/Pack'
+import Chord from './D3-Box/Chord'
 class App extends Component {
 
   render() {
@@ -30,7 +31,7 @@ class App extends Component {
          {"name": "D", "value": 3938},
          {"name": "E", "value": 3812},
          {"name": "F", "value": 6714},
-         {"name": "G", "value": 743}
+         {"name": "G", "value": 7043}
         ]
        },
        {
@@ -46,7 +47,7 @@ class App extends Component {
        {
         "name": "N",
         "children": [
-         {"name": "O", "value": 7074}
+         {"name": "O", "value": 10074}
         ]
        }
       ]
@@ -68,15 +69,15 @@ class App extends Component {
           {"name": "AB", "value": 2042}
          ]
         },
-       {"name": "Q", "value": 17010},
+       {"name": "Q", "value": 1010},
        {"name": "R", "value": 5842},
        {"name": "AC", "value": 1041},
        {"name": "AD", "value": 5176},
-       {"name": "AE", "value": 449},
+       {"name": "AE", "value": 4049},
        {"name": "AF", "value": 5593},
        {"name": "AG", "value": 5534},
        {"name": "AH", "value": 9201},
-       {"name": "AI", "value": 19975},
+       {"name": "AI", "value": 1975},
        {"name": "AJ", "value": 1116},
        {"name": "AK", "value": 6006}
       ]
@@ -87,7 +88,7 @@ class App extends Component {
        {
         "name": "AM",
         "children": [
-         {"name": "AN", "value": 721},
+         {"name": "AN", "value": 3721},
          {"name": "AO", "value": 4294},
          {"name": "AP", "value": 9800},
          {"name": "AQ", "value": 1314},
@@ -96,9 +97,9 @@ class App extends Component {
        },
        {"name": "AS", "value": 1759},
        {"name": "AT", "value": 2165},
-       {"name": "AU", "value": 586},
+       {"name": "AU", "value": 5686},
        {"name": "AV", "value": 3331},
-       {"name": "AW", "value": 772},
+       {"name": "AW", "value": 7172},
        {"name": "AX", "value": 3322}
       ]
      }
@@ -130,9 +131,17 @@ class App extends Component {
     //     }
     //   ]
     // }
-    console.log(pieData)
+    const chordata = {
+      names: ['北京', '上海', '广州', '深圳'],
+      matrix: [
+        [11975, 5871, 8916, 2868],
+        [1951, 10048, 2060, 6171],
+        [8010, 16145, 8090, 8045],
+        [1013, 990, 940, 6907]
+      ]
+    }
     const layout = {
-      width:1000,
+      width:500,
       height: 500,
       // tooltip: true,
       // tooltipline: true,
@@ -148,14 +157,15 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
-        <LineChart data={lineData} layout={layout} />
+        {/* <LineChart data={lineData} layout={layout} /> */}
         {/* <PieChart data={pieData} layout={layout}/> */}
         {/* <BarChart data={barData} layout={layout}/> */}
         {/* <Tree data={a} layout={layout}/> */}
         {/* <Pack data={a} layout={layout} /> */}
         {/* <Treemap data={a} layout={layout} /> */}
-        {/* <Partition data={a} layout={layout} />
-        <PartitionSun data={a} layout={layout} /> */}
+        {/* <Partition data={a} layout={layout} /> */}
+        {/* <PartitionSun data={a} layout={layout} /> */}
+        <Chord data={chordata} layout={layout} />
       </div>
     );
   }
