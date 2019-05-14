@@ -1,46 +1,52 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 
-class Partition extends Component {
+class PartitionSun extends Component {
 
   componentDidMount() {
     const {data,layout} = this.props
     const width = layout.width
     const height = layout.height
     const padding = { top: 40,left:40, right:40,bottom:40}
-    const svg = d3.select("#partition")
+    const svg = d3.select("#partitionsun")
       .append("svg")
       .attr("width", width)
       .attr("height", height)
 
     const partitions = svg.append("g")
-    .attr("transform",`translate(${padding.top},${padding.left})`);
+    .attr("transform",`translate(${width/2},${height/2})`);
+
 
     const root = d3.hierarchy(data)
-      .sum(function (d) {
+    .sum(function(d){
       return d.value;
-      })
+    });
 
     var color = d3.scaleSequential(d3.interpolateYlGn)
       .domain([5, -5])
 
+    const radius = (height-padding.top-padding.bottom)/2
     var partitionLayout = d3.partition();
-    partitionLayout.size([width-padding.left-padding.right, height-padding.top-padding.bottom])
+    partitionLayout.size([2 * Math.PI, radius])
 
     partitionLayout(root);
+
+    var arcGenerator = d3.arc()
+  .startAngle(function(d) { return d.x0; })
+  .endAngle(function(d) { return d.x1; })
+  .innerRadius(function(d) { return d.y0; })
+  .outerRadius(function(d) { return d.y1; })
 
     var nodes = partitions.selectAll('rect')
   .data(root.descendants())
   .enter()
 
-  nodes.append('rect')
-  // .attr('transform', function (d) { return `translate(${d.x0}, ${d.y0})` })
-  .attr('y', function(d) { return d.y0; })
-  .attr('x', function(d) { return d.x0; })
-  .attr('height', function(d) { return d.y1 - d.y0; })
-  .attr('width', function(d) { return d.x1 - d.x0; })
+    console.log(root.descendants())
+  nodes.append('path')
+  // .attr('transform', function (d) { return `translate(${height/2}, ${width/2})` })
+  .attr("d",arcGenerator)
   .style("stroke", "black")
-    .style('fill', function (d) {
+  .style('fill', function (d) {
     return color(d.depth)
   })
 
@@ -62,9 +68,9 @@ class Partition extends Component {
   }
   render() {
     return (
-      <div id="partition"  style={{ display: "inline-block", position: "relative" }} >
+      <div id="partitionsun"  style={{ display: "inline-block", position: "relative" }} >
       </div>
     );
   }
 }
-export default Partition;
+export default PartitionSun;

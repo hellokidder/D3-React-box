@@ -180,6 +180,15 @@ class LineChart extends Component {
       if (curve) {
         lineGengeator.curve(d3.curveCardinal)
       }
+      svg.append('defs')
+      .append('clipPath') // 添加长方形方块，遮罩作用
+      .attr('id', 'clip')
+      .append('rect')
+      .attr('height', height)
+      .attr('width', 0) // 用遮罩实现线动画
+      .transition()
+      .duration(1000)
+      .attr('width', width)
     for (let i = 0; i < lineData.length; i += 1){
       this.drawLine(lineData[i], svg, lineGengeator, padding)
     }
@@ -682,12 +691,14 @@ class LineChart extends Component {
     svg.append("path")
       .attr("id", linedata.name)
       .style("fill", "none")
+      .attr('clip-path', 'url(#clip)')
       .style("stroke", linedata.color)
       .style("stroke-width", linedata.width)
       .style("stroke-linecap",linedata.linecap)
       .style("stroke-linejoin",linedata.linejoin)
       .attr("d",  lineGengeator(linedata.data))
       .attr("transform", `translate(${padding.left},${padding.top})`)
+
   }
 
 
