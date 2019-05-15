@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { data2linedata, findMinMax } from '../utils/utils'
-import styles from './index.css'
 import * as d3 from 'd3';
+import styles from './index.css'
 
 class LineChart extends Component {
   state = {
@@ -156,7 +156,7 @@ class LineChart extends Component {
     const axisY = svg.append("g")
     .attr("id","axisY")
     .attr("transform", `translate(${padding.left},${padding.top})`)
-      .call(y)
+    .call(y)
       // .append("text")
       // .attr("fill", "#000")
       // .attr("transform", "rotate(-90)")
@@ -164,11 +164,12 @@ class LineChart extends Component {
       // .attr("dy", "0.9em")
       // .attr("text-anchor", "end")
       // .text("hello kidder!");
-    // X轴
-    const axisX = svg.append("g")
-    .attr("id","axisX")
+      // X轴
+      const axisX = svg.append("g")
+      .attr("id","axisX")
       .attr("transform", `translate(${padding.left},${pathheight + padding.top})`)
-      .call(x)
+        .call(x)
+
   // 折线生成×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
     const lineGengeator = d3.line()
       .x(function (d,i) {
