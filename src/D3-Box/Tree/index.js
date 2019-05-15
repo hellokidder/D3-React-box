@@ -48,13 +48,22 @@ class Tree extends Component {
     .x(function(d) { return d.y; })
     .y(function(d) { return d.x; });
 
-  //有了节点和边集的数据后，我们就可以开始绘制了，
+  g.append('defs')
+  .append('clipPath') // 添加长方形方块，遮罩作用
+  .attr('id', 'clip')
+  .append('rect')
+  .attr('height', height)
+  .attr('width', 0) // 用遮罩实现线动画
+  .transition()
+  .duration(1000)
+  .attr('width', width)
   //绘制边
   g.append("g")
     .selectAll("path")
     .data(links)
     .enter()
     .append("path")
+    .attr('clip-path', 'url(#clip)')
     .attr("d",function(d){
       var start = {x:d.source.x,y:d.source.y};
       var end = {x:d.target.x,y:d.target.y};
