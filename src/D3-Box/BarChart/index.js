@@ -3,49 +3,21 @@ import * as d3 from 'd3';
 import styles from './index.css'
 
 class BarChart extends Component {
-  state = {
-    data: [],
-    width:1000,
-    height: 500,
-    barwidth: "default",
-    padding: { top: 40, left: 45, right: 40, bottom: 40 },
-    color:  ["#1890FF", "#2FC25B", "#FACC14", "#223273", "#8543E0","#13C2C2","#3436C7","#F04864"],
-    tooltipable: false,
-  };
-  componentWillMount() {
-    const { data, layout } = this.props;
-    if (layout !== undefined) {
-      if (layout.width) {
-        this.setState({
-          width:layout.width
-        })
-      }
-      if(layout.height) {
-        this.setState({
-          height:layout.height
-        })
-      }
-      if (layout.barwidth !== undefined) {
-        this.setState({
-          barwidth:layout.barwidth
-        })
-      }
-      if(layout.tooltip !== undefined) {
-        this.setState({
-          tooltipable:layout.tooltip
-        })
-      }
-    }
-    this.setState({
-      data,
-    })
-  }
   componentDidMount() {
-    const { height, width, padding, color, tooltipable, data, barwidth} = this.state
+    const { data, layout } = this.props;
+    const padding = { top: 40, left: 45, right: 40, bottom: 40 };
+    const color = ["#1890FF", "#2FC25B", "#FACC14", "#223273", "#8543E0","#13C2C2","#3436C7","#F04864"]
+    const width = layout.width?layout.width:1000;
+    const height = layout.height ? layout.height : 500;
     const pathheight = height - padding.top - padding.bottom
     const pathwidth = width - padding.left - padding.right
+    const tooltipable = layout.tooltip !== undefined ? layout.tooltip : true
+    const barwidth = layout.barwidth?layout.barwidth:"default"
+
 
     const svg = d3.select("#barsvg")
+    .attr("width", width)
+    .attr("height",height)
     const dataArr = []
     const nameArr = []
     for (let i = 0; i < data.length; i += 1){
@@ -215,10 +187,9 @@ class BarChart extends Component {
     return tooltip
   }
   render() {
-    const { width, height} = this.state
     return (
       <div id="Bar" style={{ display: "inline-block", position: "relative" }}>
-        <svg id="barsvg" width={width} height={height} />
+        <svg id="barsvg" />
       </div>
     );
   }

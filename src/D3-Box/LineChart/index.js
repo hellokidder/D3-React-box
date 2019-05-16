@@ -4,7 +4,6 @@ import * as d3 from 'd3';
 import styles from './index.css'
 
 class LineChart extends Component {
-
   componentDidMount() {
     const { data, axis, layout, line } = this.props;
     const width = layout.width?layout.width:1000;

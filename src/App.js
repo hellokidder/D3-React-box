@@ -170,12 +170,12 @@ class App extends Component {
       width:900,
       height: 400,
       tooltip: true,
-      tooltipline: true,
-      slider:true,
-      legend:true,
-      curve: false,//将折线转化成条柔和的曲线
-      // barwidth: 40,
-      layout:"cluster",//"tree"
+      // tooltipline: true,
+      // slider:true,
+      // legend:true,
+      // curve: false,//将折线转化成条柔和的曲线
+      barwidth: 100,
+      // layout:"cluster",//"tree"
     }
     return (
       <div className="App">
@@ -183,9 +183,9 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
-        <LineChart data={lineData} layout={layout} />
+        {/* <LineChart data={lineData} layout={layout} /> */}
         {/* <PieChart data={pieData} layout={layout}/> */}
-        {/* <BarChart data={barData} layout={layout}/> */}
+        <BarChart data={barData} layout={layout}/>
         {/* <Tree data={a} layout={layout}/> */}
         {/* <Pack data={a} layout={layout} /> */}
         {/* <Treemap data={a} layout={layout} /> */}
