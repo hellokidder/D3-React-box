@@ -2,134 +2,28 @@ import React, { Component } from 'react';
 import * as d3 from 'd3';
 
 class PieChart extends Component {
-  state = {
-    data: [],
-    width:1000,
-    height: 500,
-    legend:false,
-    padding: { top: 40, left: 40, right: 40, bottom: 40 },
-    color: ["#1890FF", "#2FC25B", "#FACC14", "#8543E0","#13C2C2","#3436C7","#F04864", "#223273"],
-  };
-  componentWillMount() {
+  componentDidMount() {
     const { data, layout } = this.props;
-    const { color } = this.state;
-    if (layout !== undefined) {
-      if (layout.width) {
-        this.setState({
-          width:layout.width
-        })
-      }
-      if(layout.height) {
-        this.setState({
-          height:layout.height
-        })
-      }
-      if (layout.legend !== undefined) {
-        this.setState({
-          legend:layout.legend
-        })
-      }
-    }
-    const setData=data
+    const padding = { top: 40, left: 45, right: 40, bottom: 40 };
+    const color = ["#1890FF", "#2FC25B", "#FACC14", "#223273", "#8543E0","#13C2C2","#3436C7","#F04864"]
+    const width = layout.width?layout.width:1000;
+    const height = layout.height ? layout.height : 500;
+    const legend = layout.legend ? layout.legend : false
+
     for (let i = 0; i < data.length; i += 1) {
-      setData[i].color = color[i]
-      setData[i].click = false
+      data[i].color = color[i]
+      data[i].click = false
     }
-    setData.sort(function (a,b) {
+    data.sort(function (a,b) {
       return(b.data-a.data)
     })
-    this.setState({
-      data:setData
-    })
+    this.drawPie(data,padding,width,height,legend)
   }
-  componentDidMount() {
-    const { data } = this.state
-    this.drawPie(data)
-  }
-
-  setLegend = (svg,centerG,gs,pieChart) => {
-    const { height, width, data } = this.state;
-    const legend = svg.append('g')
-    .attr('transform', `translate(  ${width * 3 / 4} ,${height / 2})`)
-    for (let i = 0; i < data.length; i += 1){
-      const color = data[i].click?"#bfbfbf":data[i].color
-      legend.append("circle")
-        .attr("r", 6)
-        .attr("cy", function(d) {
-          return i*30
-        })
-        .attr("fill", color)
-      legend.append("text")
-        .attr("fill", "#9e9e9e")
-        .style("cursor", "pointer")
-      .attr('transform', `translate( 10,${ (i*30)+6})`)
-        .text(function () {
-        return `${data[i].name}`
-        })
-        .on("mouseover", function () {
-          if (!data[i].click) {
-            d3.select(`#pie${data[i].data}${data[i].name}`)
-            .transition()
-              .duration(500)
-              .style("opacity",0.5)
-            centerG.select(`#title`)
-            .transition()
-            .duration(500)
-            .text(function () {
-              return data[i].name
-            })
-            centerG.select(`#value`)
-            .transition()
-            .duration(500)
-            .text(function () {
-              return data[i].data
-            })
-          }
-        })
-        .on("mouseout", function () {
-          d3.select(`#pie${data[i].data}${data[i].name}`)
-          .transition()
-          .duration(500)
-          .style("opacity",1)
-
-          centerG.select(`#title`)
-          .transition()
-          .duration(500)
-          .text(function () {
-            return "总额"
-          })
-          centerG.select(`#value`)
-          .transition()
-          .duration(500)
-          .text(function () {
-            let sum = 0
-            for (let i = 0; i < data.length; i += 1){
-              if(!data[i].click)
-              sum = sum + data[i].data
-            }
-            return sum
-          })
-        })
-        .on("click", function () {
-          const newData = []
-          data[i].click = !data[i].click
-          for (let n = 0; n < data.length; n += 1){
-            if (!data[n].click) {
-              newData.push(data[n])
-            }
-          }
-          gs.remove()
-          legend.remove()
-          centerG.remove()
-          pieChart.drawPie(newData)
-        })
-    }
-  }
-  drawPie = (data) => {
-    const { padding,height,width, legend } = this.state;
+  drawPie = (data,padding,width,height,legend) => {
 
     const svg = d3.select("#piesvg")
-
+    .attr("width", width)
+    .attr("height",height)
     const g = svg.append('g')
       .attr('transform', `translate(${legend?width*3/8:width/2} ,${ height/2})`)
 
@@ -151,17 +45,23 @@ class PieChart extends Component {
     .innerRadius(innerRadius+20)
     .outerRadius(outerRadius+20)
 
+    const drawData = []
+    for (let i = 0; i < data.length; i += 1){
+      if (!data[i].click) {
+        drawData.push(data[i])
+      }
+    }
     const arcData = d3.pie()
       .sort(function (a,b) {
         return b.data-a.data
       })
       .value(function (d) {
         let sum = 0
-        for (let i = 0; i < data.length; i += 1){
-          sum = sum + data[i].data
+        for (let i = 0; i < drawData.length; i += 1){
+          sum = sum + drawData[i].data
         }
         return Math.round(d.data/sum*100)
-      })(data)
+      })(drawData)
 
     const gs = g.selectAll('.g')
       .data(arcData)
@@ -236,7 +136,6 @@ class PieChart extends Component {
         })
     })
 
-    //点击Legend重新渲染存在BUG
     arc.transition().duration(500).attrTween('d',function(d){
       var compute = d3.interpolate(d.startAngle, d.endAngle);
       return function(t){
@@ -314,14 +213,86 @@ class PieChart extends Component {
       return sum
     })
     if (legend) {
-      this.setLegend(svg,centerG,gs,this)
+      this.setLegend(svg, centerG, gs, this, height, width, padding, data)
     }
   }
+  setLegend = (svg,centerG,gs, pieChart,height, width, padding, data) => {
+    // const { height, width, data } = this.state;
+    const legend = svg.append('g')
+    .attr('transform', `translate(  ${width * 3 / 4} ,${height / 2})`)
+    for (let i = 0; i < data.length; i += 1){
+      const color = data[i].click?"#bfbfbf":data[i].color
+      legend.append("circle")
+        .attr("r", 6)
+        .attr("cy", function(d) {
+          return i*30
+        })
+        .attr("fill", color)
+      legend.append("text")
+        .attr("fill", "#9e9e9e")
+        .style("cursor", "pointer")
+      .attr('transform', `translate( 10,${ (i*30)+6})`)
+        .text(function () {
+        return `${data[i].name}`
+        })
+        .on("mouseover", function () {
+          if (!data[i].click) {
+            d3.select(`#pie${data[i].data}${data[i].name}`)
+            .transition()
+              .duration(500)
+              .style("opacity",0.5)
+            centerG.select(`#title`)
+            .transition()
+            .duration(500)
+            .text(function () {
+              return data[i].name
+            })
+            centerG.select(`#value`)
+            .transition()
+            .duration(500)
+            .text(function () {
+              return data[i].data
+            })
+          }
+        })
+        .on("mouseout", function () {
+          d3.select(`#pie${data[i].data}${data[i].name}`)
+          .transition()
+          .duration(500)
+          .style("opacity",1)
+
+          centerG.select(`#title`)
+          .transition()
+          .duration(500)
+          .text(function () {
+            return "总额"
+          })
+          centerG.select(`#value`)
+          .transition()
+          .duration(500)
+          .text(function () {
+            let sum = 0
+            for (let i = 0; i < data.length; i += 1){
+              if(!data[i].click)
+              sum = sum + data[i].data
+            }
+            return sum
+          })
+        })
+        .on("click", function () {
+          data[i].click = !data[i].click
+          gs.remove()
+          legend.remove()
+          centerG.remove()
+          pieChart.drawPie(data,padding,width,height,legend)
+        })
+    }
+  }
+
   render() {
-    const { width ,height} = this.state
     return (
       <div id="Pie" style={{ display: "inline-block", position: "relative" }}>
-        <svg id="piesvg" width={width} height={height} />
+        <svg id="piesvg" />
       </div>
     );
   }

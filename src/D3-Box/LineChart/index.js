@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { data2linedata } from '../utils/utils'
 import * as d3 from 'd3';
 import styles from './index.css'
 
@@ -37,6 +36,22 @@ class LineChart extends Component {
 
 
     const lineData = data2linedata(data, axisConfig.Y)
+    function data2linedata(data, axisY) {
+      const lineData = []
+      for (let n = 0; n < axisY.length; n += 1){
+        if (data[0][axisY[n]] !== undefined) {
+          const line = {}
+          line.name = axisY[n]
+          line.data = []
+          for (let i = 0; i < data.length; i += 1){
+            line.data.push(data[i][axisY[n]])
+          }
+          lineData.push(line)
+        }
+      }
+      return lineData
+    }
+
     function setlineData() {
       const { width, linecap, linejoin, unit } = lineConfig
       for (let i = 0; i < lineData.length; i += 1){
