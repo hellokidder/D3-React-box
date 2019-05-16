@@ -10121,6 +10121,11 @@ text1123@^1.0.0:
     react "^16.8.6"
     react-dom "^16.8.6"
 
+text112@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npm.taobao.org/text112/download/text112-1.0.0.tgz#3820cb5a7dab72188147e80122c36ca1d7fe6bb4"
+  integrity sha1-OCDLWn2rchiBR+gBIsNsodf+a7Q=
+
 throat@^4.0.0:
   version "4.1.0"
   resolved "http://registry.npm.taobao.org/throat/download/throat-4.1.0.tgz#89037cbc92c56ab18926e6ba4cbb200e15672a6a"

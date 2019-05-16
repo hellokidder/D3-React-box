@@ -1,90 +1,42 @@
 import React, { Component } from 'react';
-import { data2linedata, findMinMax } from '../utils/utils'
+import { data2linedata } from '../utils/utils'
 import * as d3 from 'd3';
 import styles from './index.css'
 
 class LineChart extends Component {
-  state = {
-    data: [],
-    lineData: [],
-    renderData: [],
-    renderLineData:[],
-    width:1000,
-    height: 500,
-    padding: { top: 40, left: 45, right: 40, bottom: 40 },
-    color:  ["#1890FF", "#2FC25B", "#FACC14", "#223273", "#8543E0","#13C2C2","#3436C7","#F04864"],
-    tooltipable: true,
-    tooltiplineable: true,
-    legendable: true,
-    sliderable: true,
-    curve: false,
-    lineConfig : {
+
+  componentDidMount() {
+    const { data, axis, layout, line } = this.props;
+    const width = layout.width?layout.width:1000;
+    const height = layout.height ? layout.height : 500;
+    const padding = { top: 40, left: 45, right: 40, bottom: 40 };
+    const sliderable = layout.slider ? layout.slider : false
+    const legendable = layout.legend ? layout.legend : false
+    const tooltiplineable = layout.tooltipline!==undefined ? layout.tooltipline : true
+    const tooltipable = layout.tooltip!==undefined?layout.tooltip:true
+    const curve = layout.curve ? layout.curve : false
+    const color = ["#1890FF", "#2FC25B", "#FACC14", "#223273", "#8543E0","#13C2C2","#3436C7","#F04864"]
+    const lineConfig = {
       width: 2,
       linecap: "round",
       linejoin:"round",
       unit:""
-      },
-    axis: {}
-  };
-
-  componentWillMount() {
-    const { data, axis, layout, line } = this.props;
-    const { axis: axisConfig, color, lineConfig, padding,legendable,sliderable} = this.state
-    // 向axis中添加x,y轴数据,默认以第一个数据项为X轴
-    const keys = Object.keys(data[0])
-    axisConfig.X = axis?( axis.x ? axis.x : keys[0]) : keys[0]
-    keys.splice(keys.indexOf(axisConfig.X),1)
-    axisConfig.Y = axis ? (axis.y ? axis.y : keys) : keys
-    //****************************************************** */
-    // 初始化各项配置
-    if (layout !== undefined) {
-      if (layout.width) {
-        this.setState({
-          width:layout.width
-        })
       }
-      if(layout.height) {
-        this.setState({
-          height:layout.height
-        })
-      }
-      if(layout.slider !== undefined) {
-        this.setState({
-          sliderable:layout.slider
-        })
-      }
-      if(layout.legend !== undefined) {
-        this.setState({
-          legendable: layout.legend
-        })
-      }
-      if(layout.tooltip !== undefined) {
-        this.setState({
-          tooltipable:layout.tooltip
-        })
-      }
-      if (layout.tooltipline !== undefined) {
-        this.setState({
-          tooltiplineable:layout.tooltipline
-        })
-      }
-      if(layout.curve !== undefined) {
-        this.setState({
-          curve:layout.curve
-        })
-      }
-      if(layout.slider) padding.bottom += 30
-      if(layout.legend) padding.bottom += 20
-    }
-
     if(sliderable) padding.bottom += 30
     if(legendable) padding.bottom += 20
 
 
+    const axisConfig = {}
+    const keys = Object.keys(data[0])
+    axisConfig.X = axis?( axis.x ? axis.x : keys[0]) : keys[0]
+    keys.splice(keys.indexOf(axisConfig.X),1)
+    axisConfig.Y = axis ? (axis.y ? axis.y : keys) : keys
 
 
-    //*********************************************************** */
-    // 初始化线数据
+    const pathwidth = width - padding.left - padding.right
+    const pathheight = height - padding.top - padding.bottom
+
+
     const lineData = data2linedata(data, axisConfig.Y)
     function setlineData() {
       const { width, linecap, linejoin, unit } = lineConfig
@@ -94,6 +46,7 @@ class LineChart extends Component {
         lineData[i].linecap = linecap
         lineData[i].linejoin = linejoin
         lineData[i].unit = unit
+        lineData[i].rander = [0,data.length]
         if (color[i]) {
           lineData[i].color =color[i]
         } else {
@@ -115,28 +68,31 @@ class LineChart extends Component {
         }
       }
     }
-    setlineData()
-    //********************************************************************** */
-    this.setState({
-      axis: axisConfig,
-      padding,
-      lineData,
-      data,
-      renderData: data,
-      renderLineData:lineData,
-    })
-  }
+ setlineData()
+
+    function findMinMax(lineData) {
+      let dataArr = []
+      const minMax = {}
+      for (let i = 0; i < lineData.length; i+=1){
+        if (!lineData[i].click){
+          dataArr = dataArr.concat(lineData[i].data)
+        }
+      }
+      minMax.min = d3.min(dataArr)
+      minMax.max = d3.max(dataArr)
+      return minMax
+    }
+    const minMaxXY = findMinMax(lineData)
 
 
-  componentDidMount() {
-    const { data, padding, height, width,axis,lineData, tooltiplineable,tooltipable,legendable,sliderable, curve } = this.state;
-    const pathwidth = width - padding.left - padding.right
-    const pathheight = height - padding.top - padding.bottom
+
+
     const svg = d3.select("#linesvg")
-    const minMaxXY = findMinMax(data, axis)
+      .attr("width", width)
+    .attr("height",height)
     const scaleXData = []
     for (let i = 0; i < data.length; i += 1){
-      scaleXData.push(data[i][axis.X])
+      scaleXData.push(data[i][axisConfig.X])
     }
     // 放大器
     const scaleX = d3.scalePoint()
@@ -148,15 +104,16 @@ class LineChart extends Component {
     const scaleY = d3.scaleLinear()
       .domain([minMaxXY.min,minMaxXY.max]).nice()
       .range([pathheight, 0])
-    // 轴线生成×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+  //   // 轴线生成×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
     // 线条生成器
     const x = d3.axisBottom(scaleX)
     const y = d3.axisLeft(scaleY)
-    // y轴
+  //   // y轴
     const axisY = svg.append("g")
     .attr("id","axisY")
     .attr("transform", `translate(${padding.left},${padding.top})`)
-    .call(y)
+      .call(y)
+      // egg
       // .append("text")
       // .attr("fill", "#000")
       // .attr("transform", "rotate(-90)")
@@ -170,7 +127,7 @@ class LineChart extends Component {
       .attr("transform", `translate(${padding.left},${pathheight + padding.top})`)
         .call(x)
 
-  // 折线生成×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+  // // 折线生成×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
     const lineGengeator = d3.line()
       .x(function (d,i) {
         return xpoint(i)
@@ -194,144 +151,40 @@ class LineChart extends Component {
       this.drawLine(lineData[i], svg, lineGengeator, padding)
     }
 
-    // tooltipline***********************************************************************
+  //   // tooltipline***********************************************************************
     let tooltipLine = {}
     if (tooltiplineable) {
       tooltipLine = this.tooltipLine(pathheight)
     }
-    // tooltip***************************************************************************
+  //   // tooltip***************************************************************************
     let tooltip = {}
     if (tooltipable) {
-      tooltip = this.setTooltip(this)
+      tooltip = this.setTooltip(lineData)
     }
-    // 对画布添加鼠标事件方法+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //   // 对画布添加鼠标事件方法+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if (tooltiplineable || tooltipable) {
-      this.setSvgMouse(svg,tooltipLine,tooltip,this,padding,pathwidth,pathheight,tooltiplineable,tooltipable)
+      this.setSvgMouse(lineData,data,svg,axisConfig,tooltipLine,tooltip,padding,pathwidth,pathheight,tooltiplineable,tooltipable)
     }
-    // legend****************************************************************************
+  //   // legend****************************************************************************
     if (legendable) {
-      this.setLegend(this,svg, pathwidth,axisY)
+      this.setLegend(sliderable,height,padding, lineData ,svg, pathwidth,axisY,findMinMax,curve)
     }
-    // slider****************************************************************************
+  //   // slider****************************************************************************
     if (sliderable) {
-      this.setSlider(padding,pathwidth,height,this,axisX,axisY,axis)
+      this.setSlider(padding,pathwidth,height,axisX,axisY,axisConfig,findMinMax,curve,lineData,this,data)
     }
   }
 
-  setLegend = (linechart,svg, pathwidth,axisY) => {
-    const { sliderable,height,padding, lineData } = linechart.state;
-    let transformHeight = sliderable ? height - 50 : height-20
-      const legend = svg.append("g")
-        .attr("transform", `translate(${padding.left},${transformHeight})`)
-      const legendLength = pathwidth / lineData.length / 2
-      const mid = pathwidth/2-legendLength*(lineData.length-1)/2
-      for (let i = 0; i < lineData.length; i += 1){
-        legend.append("path")
-          .attr("d", `M0,0L10,0`)
-          .style("fill", "none")
-          .style("stroke", lineData[i].color)
-          .style("stroke-width", lineData[i].width)
-          .style("stroke-linecap", lineData[i].linecap)
-          .attr("transform", `translate(${i * legendLength + mid},${-6})`)
-        legend.append("text")
-          .text(lineData[i].name)
-          .style("font-size", "16px")
-          .style("fill", "#8b8b8b")
-          .style("cursor", "pointer")
-          .attr("id", `mouse#${lineData[i].name}`)
-          .attr("x", i * legendLength + 15 + mid)
-          .on("mouseover", function () {
-            const { renderLineData } = linechart.state
-            if (!renderLineData[i].click) {
-              mouseOver(i)
-            }
-          })
-          .on("mouseout", function () {
-            mouseOut(i)
-          })
-          .on("click", function (d) {
-            const { renderLineData } = linechart.state
-            renderLineData[i].click?renderLineData[i].click=false:renderLineData[i].click=true
-            linechart.setState({
-              renderLineData,
-            })
-            renderClick()
-          })
-      }
-    function renderClick() {
-      const { renderLineData,renderData,axis,curve } = linechart.state
-      const newAxis = {}
-      newAxis.X = axis.X
-      newAxis.Y = []
-      for (let i = 0; i < renderLineData.length; i += 1){
-        if (!renderLineData[i].click) {
-          newAxis.Y.push(renderLineData[i].name)
-        }
-      }
-      const minMaxXY = findMinMax(renderData, newAxis)
-      const scaleY = d3.scaleLinear()
-      .domain([minMaxXY.min,minMaxXY.max]).nice()
-        .range([height - padding.top - padding.bottom, 0])
-      const axisy = d3.axisLeft(scaleY)
-      axisY.transition()
-      .duration(1000)
-        .call(axisy)
-      const scaleX = d3.scaleLinear()
-        .domain([0, renderData.length - 1])
-        .range([0, pathwidth])
-      const newlineGengeator = d3.line()
-        .x(function (d,i) {
-          return scaleX(i)
-        })
-        .y(function (d) {
-          return scaleY(d)
-        })
-      if (curve) {
-        newlineGengeator.curve(d3.curveCardinal)
-      }
-      for (let i = 0; i < renderLineData.length; i += 1){
-        if (!renderLineData[i].click) {
-          d3.select(`#${renderLineData[i].name}`)
-          .transition()
-          .duration(1000)
-          .attr("d",newlineGengeator(renderLineData[i].data))
-        } else {
-          d3.select(`#${renderLineData[i].name}`)
-          .transition()
-          .duration(1000)
-          .attr("d","")
-          }
-        }
-      }
-    function mouseOver(i) {
-        for (let n = 0; n < lineData.length; n += 1){
-          svg.select(`path#${lineData[n].name}`)
-            .style("opacity", 0.2)
-          }
-        svg.select(`path#${lineData[i].name}`)
-          .style("opacity",1)
-          .style("stroke-width", lineData[i].width + 1)
-      }
-      function mouseOut(i) {
-        for (let n = 0; n < lineData.length; n += 1){
-          svg.select(`path#${lineData[n].name}`)
-            .style("opacity", 1)
-            .style("stroke-width", lineData[i].width)
-        }
-      }
-  }
-
-
-  setSvgMouse = (svg,tooltipLine,tooltip,linechart,padding,pathwidth,pathheight,tooltiplineable, tooltipable) => {
+  setSvgMouse = (lineData,data,svg,axisConfig,tooltipLine,tooltip,padding,pathwidth,pathheight,tooltiplineable, tooltipable) => {
     svg.on("mousemove", function () {
       const m = d3.mouse(this)
       if (m[0] - padding.left > 0 && m[0] - padding.left < pathwidth && m[1] > padding.top && m[1] < pathheight + padding.top) {
-        const { renderData, renderLineData,axis } = linechart.state
-        const roundX = Math.round((m[0] - padding.left) / (pathwidth / (renderData.length - 1)))
-        const pathX = roundX * (pathwidth / (renderData.length - 1))
+        const dataLength = lineData[0].rander[1]-lineData[0].rander[0]
+        const roundX = Math.round((m[0] - padding.left) / (pathwidth / (dataLength - 1)))
+        const pathX = roundX * (pathwidth / (dataLength - 1))
         const xpoint = d3.scaleLinear()
         .domain([0,pathwidth])
-        .range([0, renderData.length - 1])
+        .range([0, dataLength - 1])
         const countX = Math.round(xpoint(pathX))
         if (tooltiplineable) {
           tooltipLine.style("opacity",1)
@@ -339,27 +192,27 @@ class LineChart extends Component {
         }
         if (tooltipable) {
           tooltip.select("#title")
-              .text(`${renderData[countX][axis.X]}`)
-          for (let i = 0; i < renderLineData.length; i += 1){
+            .text(`${data[countX+lineData[0].rander[0]][axisConfig.X]}`)
+          for (let i = 0; i < lineData.length; i += 1){
             // 将选中区域数据添加到toolTip
-            if (renderLineData[i].click) {
-              tooltip.select(`#tooltip${renderLineData[i].name}`)
+            if (lineData[i].click) {
+              tooltip.select(`#tooltip${lineData[i].name}`)
                 .style("height", "0px")
-              tooltip.select(`#${renderLineData[i].name}dot`)
+              tooltip.select(`#${lineData[i].name}dot`)
               .style("height", "0px")
-              tooltip.select(`#${renderLineData[i].name}key`)
+              tooltip.select(`#${lineData[i].name}key`)
                 .text('')
-              tooltip.select(`#${renderLineData[i].name}val`)
+              tooltip.select(`#${lineData[i].name}val`)
                 .text('')
             } else {
-              tooltip.select(`#tooltip${renderLineData[i].name}`)
+              tooltip.select(`#tooltip${lineData[i].name}`)
               .style("height", "20px")
-              tooltip.select(`#${renderLineData[i].name}dot`)
+              tooltip.select(`#${lineData[i].name}dot`)
               .style("height", "8px")
-              tooltip.select(`#${renderLineData[i].name}key`)
-                .text(`${renderLineData[i].name}:`)
-              tooltip.select(`#${renderLineData[i].name}val`)
-                .text(`${renderLineData[i].data[countX]}${renderLineData[i].unit}`)
+              tooltip.select(`#${lineData[i].name}key`)
+                .text(`${lineData[i].name}:`)
+              tooltip.select(`#${lineData[i].name}val`)
+                .text(`${lineData[i].data[countX+lineData[0].rander[0]]}${lineData[i].unit}`)
             }
           }
           // toolTip 跟随鼠标并限制在SVG区域
@@ -394,10 +247,8 @@ class LineChart extends Component {
       }
     })
   }
-
-
-  setTooltip = (linechart) => {
-    const { renderLineData:data } = linechart.state
+  setTooltip = (lineData) => {
+    // const { renderLineData:data } = linechart.state
     const tooltip = d3.select("#linechart")
       .append("div")
       .attr("id","tooltip")
@@ -421,11 +272,10 @@ class LineChart extends Component {
       .style("margin", "0px")
       .style("padding","0px")
 
-    for (let i = 0; i < data.length; i += 1){
-      if (!data[i].click) {
-
+    for (let i = 0; i < lineData.length; i += 1){
+      if (!lineData[i].click) {
         const tip = ul.append("div")
-          .attr("id", `tooltip${data[i].name}`)
+          .attr("id", `tooltip${lineData[i].name}`)
           .style("text-align"," left")
 
         const name = tip.append("div")
@@ -439,28 +289,26 @@ class LineChart extends Component {
           dot.append("div")
           .style("display", "inline-block")
           .style("border-radius", "50%")
-          .style("background-color", data[i].color)
+          .style("background-color", lineData[i].color)
           .style("margin-right", "0px")
           .style("padding-right", "0px")
           .style("width", "8px")
           .style("height","8px")
-          .attr("id", `${data[i].name}dot`)
+          .attr("id", `${lineData[i].name}dot`)
         name.append("div")
           .style("display", "inline-block")
           .style("margin-left","5px")
-          .attr("id", `${data[i].name}key`)
+          .attr("id", `${lineData[i].name}key`)
         tip.append("div")
           .style("display", "inline-block")
-          .attr("id", `${data[i].name}val`)
+          .attr("id", `${lineData[i].name}val`)
           .style("margin-left", "30px")
           .style("float","right")
       }
     }
     return tooltip
   }
-
-
-  setSlider = (padding, pathwidth, height, linechart,axisX,axisY,axis) => {
+  setSlider = (padding, pathwidth, height,axisX,axisY,axisConfig,findMinMax,curve,lineData,lineChart,data) => {
     const top = height - 30
     let x = padding.left
     let y = padding.left + pathwidth
@@ -511,27 +359,17 @@ class LineChart extends Component {
         sliderLeft.attr("x", x - 3)
         sliderRight.attr("x", y - 3)
       }
-      const { data, lineData, renderLineData, curve } = linechart.state
-      const　unScaleX = d3.scaleLinear()
+      const unScaleX = d3.scaleLinear()
       .domain([0,pathwidth])
       .range([0, data.length - 1])
-      const roomX = Math.ceil(unScaleX(x - padding.left))
-      const roomY = Math.floor(unScaleX(y - padding.left))
+      const roomX = Math.ceil(unScaleX(x - padding.left-10))
+      const roomY = Math.floor(unScaleX(y - padding.left+10))
       const newData = data.slice(roomX, roomY + 1)
       const newScaleX = []
       for (let i = 0; i < newData.length; i += 1){
-        newScaleX.push(newData[i][axis.X])
+        newScaleX.push(newData[i][axisConfig.X])
       }
-
-      const newAxis = {}
-      newAxis.X = axis.X
-      newAxis.Y = []
-      for (let i = 0; i < renderLineData.length; i += 1){
-        if (!renderLineData[i].click) {
-          newAxis.Y.push(renderLineData[i].name)
-        }
-      }
-      const minMaxXY = findMinMax(newData, newAxis)
+      const minMaxXY = findMinMax(lineData)
       const scaleX = d3.scalePoint()
       .domain(newScaleX)
         .range([0, pathwidth])
@@ -560,27 +398,15 @@ class LineChart extends Component {
       axisY.transition()
       .duration(1000)
         .call(axisy)
-      const newlineData = []
       for (let i = 0; i < lineData.length; i += 1){
-        newlineData[i] = {}
-        for (const item in lineData[i]) {
-          if(item!=="data"&&item!=="click")
-          newlineData[i][item] = lineData[i][item]
-        }
-        newlineData[i].click = renderLineData[i].click
-        newlineData[i].data =[]
-        newlineData[i].data = lineData[i].data.slice(roomX, roomY + 1)
-        if (!renderLineData[i].click) {
+        lineData[i].rander = [roomX,roomY+1]
+        if (!lineData[i].click) {
           d3.select(`#${lineData[i].name}`)
           .transition()
             .duration(1000)
             .attr("d", newlineGengeator(lineData[i].data.slice(roomX, roomY + 1)))
         }
       }
-      linechart.setState({
-        renderData: newData,
-        renderLineData: newlineData
-      })
     }
 
     const dragRoom = d3.drag()
@@ -647,6 +473,7 @@ class LineChart extends Component {
       .attr("height", "20px")
       .attr("transform", `translate(${-padding.left},${0})`)
 
+    lineChart.drawSliderLine(sliderSvg, lineData[0], curve, pathwidth, "20", findMinMax,padding)
     const room =  sliderSvg.append("rect")
       .attr("x", x)
       .attr("y", 0)
@@ -654,6 +481,7 @@ class LineChart extends Component {
       .attr("width", y-x)
       .style("fill", "#cddaef")
       .style("stroke", "#a3afc3")
+      .style("opacity", 0.5)
       .style("cursor", "move")
       .call(dragRoom)
 
@@ -678,6 +506,37 @@ class LineChart extends Component {
       .style("cursor", "ew-resize")
       .call(dragy)
   }
+
+  drawSliderLine = (sliderSvg, line, curve, pathwidth,pathheight,findMinMax,padding) => {
+    const minMaxXY = findMinMax([line])
+    const scaleX = d3.scaleLinear()
+    .domain([0, line.data.length - 1])
+    .range([0,pathwidth])
+  const scaleY = d3.scaleLinear()
+    .domain([minMaxXY.min,minMaxXY.max]).nice()
+    .range([pathheight, 0])
+    const lineGengeator = d3.line()
+    .x(function (d,i) {
+      return scaleX(i)
+    })
+    .y(function (d) {
+      return scaleY(d)
+    })
+    if (curve) {
+      lineGengeator.curve(d3.curveCardinal)
+    }
+    sliderSvg.append('path')
+    .attr("id", `sliderLine`)
+    .style("fill", "none")
+    .attr('clip-path', 'url(#clip)')
+    .style("stroke", "#979aa0")
+    .style("stroke-width", 1)
+    .attr("d",  lineGengeator(line.data))
+    .attr("transform", `translate(${padding.left},${0})`)
+  }
+
+
+
   tooltipLine = (pathheight) => {
     const tooltipLine = d3.select("#linesvg")
     .append("path")
@@ -699,15 +558,100 @@ class LineChart extends Component {
       .style("stroke-linejoin",linedata.linejoin)
       .attr("d",  lineGengeator(linedata.data))
       .attr("transform", `translate(${padding.left},${padding.top})`)
-
   }
 
-
+  setLegend = (sliderable, height, padding, lineData ,svg, pathwidth,axisY,findMinMax,curve) => {
+    let transformHeight = sliderable ? height - 50 : height-20
+      const legend = svg.append("g")
+        .attr("transform", `translate(${padding.left},${transformHeight})`)
+      const legendLength = pathwidth / lineData.length / 2
+      const mid = pathwidth/2-legendLength*(lineData.length-1)/2
+      for (let i = 0; i < lineData.length; i += 1){
+        legend.append("path")
+          .attr("d", `M0,0L10,0`)
+          .style("fill", "none")
+          .style("stroke", lineData[i].color)
+          .style("stroke-width", lineData[i].width)
+          .style("stroke-linecap", lineData[i].linecap)
+          .attr("transform", `translate(${i * legendLength + mid},${-6})`)
+        legend.append("text")
+          .text(lineData[i].name)
+          .style("font-size", "16px")
+          .style("fill", "#8b8b8b")
+          .style("cursor", "pointer")
+          .attr("id", `mouse#${lineData[i].name}`)
+          .attr("x", i * legendLength + 15 + mid)
+          .on("mouseover", function () {
+            if (!lineData[i].click) {
+              mouseOver(i)
+            }
+          })
+          .on("mouseout", function () {
+            mouseOut(i)
+          })
+          .on("click", function (d) {
+            lineData[i].click = !lineData[i].click
+            renderClick()
+          })
+      }
+    function renderClick() {
+      const minMaxXY = findMinMax(lineData)
+      const scaleY = d3.scaleLinear()
+        .domain([minMaxXY.min,minMaxXY.max]).nice()
+        .range([height - padding.top - padding.bottom, 0])
+      const axisy = d3.axisLeft(scaleY)
+      axisY.transition()
+        .duration(1000)
+        .call(axisy)
+      const scaleX = d3.scaleLinear()
+        .domain([0, lineData[0].rander[1]-lineData[0].rander[0]-1])
+        .range([0, pathwidth])
+      const newlineGengeator = d3.line()
+        .x(function (d,i) {
+          return scaleX(i)
+        })
+        .y(function (d) {
+          return scaleY(d)
+        })
+      if (curve) {
+        newlineGengeator.curve(d3.curveCardinal)
+      }
+      for (let i = 0; i < lineData.length; i += 1){
+        if (!lineData[i].click) {
+          const { rander } = lineData[i]
+          d3.select(`#${lineData[i].name}`)
+          .transition()
+          .duration(1000)
+            .attr("d", newlineGengeator(lineData[i].data.slice(rander[0], rander[1])))
+        } else {
+          d3.select(`#${lineData[i].name}`)
+          .transition()
+          .duration(1000)
+          .attr("d","")
+          }
+        }
+      }
+    function mouseOver(i) {
+        for (let n = 0; n < lineData.length; n += 1){
+          svg.select(`path#${lineData[n].name}`)
+            .style("opacity", 0.2)
+          }
+        svg.select(`path#${lineData[i].name}`)
+          .style("opacity",1)
+          .style("stroke-width", lineData[i].width + 1)
+      }
+      function mouseOut(i) {
+        for (let n = 0; n < lineData.length; n += 1){
+          svg.select(`path#${lineData[n].name}`)
+            .style("opacity", 1)
+            .style("stroke-width", lineData[i].width)
+        }
+      }
+  }
   render() {
-    const { width, height} = this.state
     return (
       <div id="linechart" style={{ display: "inline-block", position: "relative" }} >
-        <svg id="linesvg" width={width} height={height} />
+        <svg id="linesvg" />
       </div>
     );
   }

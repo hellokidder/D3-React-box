@@ -4,7 +4,6 @@ import logo from './logo.svg';
 import './App.css';
 import { barData, lineData, pieData} from './D3-Box/config/config'
 import PieChart from './D3-Box/PieChart'
-// import {Tree} from 'text1123'
 import Tree from './D3-Box/Tree'
 import Treemap from './D3-Box/Treemap'
 import Partition from './D3-Box/Partition'
@@ -168,13 +167,13 @@ class App extends Component {
       ]
     }
     const layout = {
-      width:800,
-      height: 500,
-      // tooltip: true,
-      // tooltipline: true,
+      width:900,
+      height: 400,
+      tooltip: true,
+      tooltipline: true,
       slider:true,
-      legend:false,
-      // curve: true,//将折线转化成条柔和的曲线
+      legend:true,
+      curve: false,//将折线转化成条柔和的曲线
       // barwidth: 40,
       layout:"cluster",//"tree"
     }
@@ -187,7 +186,7 @@ class App extends Component {
         <LineChart data={lineData} layout={layout} />
         {/* <PieChart data={pieData} layout={layout}/> */}
         {/* <BarChart data={barData} layout={layout}/> */}
-        <Tree data={a} layout={layout}/>
+        {/* <Tree data={a} layout={layout}/> */}
         {/* <Pack data={a} layout={layout} /> */}
         {/* <Treemap data={a} layout={layout} /> */}
         {/* <Partition data={a} layout={layout} /> */}
