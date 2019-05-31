@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import logo from './logo.svg';
 import './App.css';
 import { barData, lineData, pieData} from './D3-Box/config/config'
-import PieChart from './D3-Box/PieChart'
+// import PieChart from './D3-Box/PieChart'
 import Tree from './D3-Box/Tree'
 import Treemap from './D3-Box/Treemap'
 import Partition from './D3-Box/Partition'
@@ -15,6 +15,7 @@ import BarChart from './D3-Box/BarChart'
 import Pack from './D3-Box/Pack'
 import Chord from './D3-Box/Chord'
 import Force from './D3-Box/Force'
+import Heatmap from './D3-Box/Git-heatmap'
 class App extends Component {
 
   render() {
@@ -183,9 +184,9 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
-        <LineChart data={lineData} layout={layout} />
-        <PieChart data={pieData} layout={layout}/>
-        <BarChart data={barData} layout={layout}/>
+        {/* <LineChart data={lineData} layout={layout} /> */}
+        {/* <PieChart data={pieData} layout={layout}/> */}
+        {/* <BarChart data={barData} layout={layout}/> */}
         {/* <Tree data={a} layout={layout}/> */}
         {/* <Pack data={a} layout={layout} /> */}
         {/* <Treemap data={a} layout={layout} /> */}
@@ -193,6 +194,7 @@ class App extends Component {
         {/* <PartitionSun data={a} layout={layout} /> */}
         {/* <Chord data={chordata} layout={layout} /> */}
         {/* <Force data={forcedata} layout={layout} /> */}
+        <Heatmap />
       </div>
     );
   }
