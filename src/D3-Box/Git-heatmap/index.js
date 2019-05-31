@@ -25,16 +25,12 @@ function Heatmap({ data }) {
     ];
     const week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const nowTime = new Date();
-    // const nowDay = nowTime.getDay();
     const nowMonth = nowTime.getMonth();
     const nowYear = nowTime.getFullYear();
-    // const nowDate = nowTime.getDate();
     const everymonth = [];
     const summonth = [];
-    // console.log(nowDay, nowYear, nowMonth, nowDate)
     for (let i = 0; i < 12; i += 1) {
       const a = new Date(nowYear - 1, nowMonth + 2 + i, 0);
-      // console.log(a.toLocaleString(), a.getDate())
       everymonth.push(a.getDate());
       if (i === 0) {
         summonth.push(a.getDate());
@@ -46,6 +42,19 @@ function Heatmap({ data }) {
     d3.select('#heatmapsvg')
       .selectAll('*')
       .remove();
+
+      const tooltip = d3
+      .select(`#heatmap-tooltip`)
+      .style('position', 'absolute')
+      .style('background-color', '#000000')
+      .style('box-shadow', 'rgb(174, 174, 174) 0px 0px 10px')
+      .style('border-radius', '3px')
+      .style('padding', '10px 10px 6px 10px')
+      .style('color', 'white')
+      .style('font-size', '12px')
+      .style('line-height', '20px')
+      .style('visibility', 'hidden')
+      .style('opacity', 0.8);
 
     const lastyear = new Date(nowYear - 1, nowMonth + 1, 1);
     const startTime = new Date(nowYear - 1, nowMonth + 1, 1 - lastyear.getDay());
@@ -73,12 +82,49 @@ function Heatmap({ data }) {
         .attr('height', 12)
         .attr('id', () => {
           const setdata = new Date(startTime.getTime() + i * 24 * 60 * 60 * 1000);
-          const dataArr = setdata.toLocaleString().split(' ')[0].split("/")
+          const dataArr = setdata
+            .toLocaleString()
+            .split(' ')[0]
+            .split('/');
           if (i % 7 === 0 && dataArr[2] < 8) {
-            monthArr.push((i/7)*16)
+            monthArr.push((i / 7) * 16);
           }
-          const tmp = setdata.toLocaleString().split(' ')[0].split('/').join("-")
+          const tmp = dataArr.join('-');
           return `rect${tmp}`;
+        })
+        .on('mouseover', function rectmousein() {
+          const id = this.getAttribute('id')
+            .split('rect')[1]
+            .split('-');
+          if (id[1].length === 1) {
+            id[1] = `0${id[1]}`;
+          }
+          if (id[2].length === 1) {
+            id[2] = `0${id[2]}`;
+          }
+          const selectdate = id.join('-');
+          let tooltiptext = `${selectdate}: 0 count`;
+          for (let n = 0; n < data.length; n += 1) {
+            if (selectdate === data[n].date) {
+              tooltiptext = `${selectdate} : ${data[n].count} count`;
+            }
+          }
+          const transX = this.getAttribute('x');
+          const transY = this.getAttribute('y');
+          const tool = document.getElementById(`heatmap-tooltip`);
+          tooltip
+            .text(tooltiptext)
+            .style(
+              'top',
+              `${Number(transY) + (16 + 16 + 24 + 24) + padding.top - tool.offsetHeight - 10}px`
+            );
+          if (Number(transX) + tool.offsetWidth / 2 + 20 < width) {
+            tooltip.style('left', `${Number(transX)}px`);
+          }
+          tooltip.style('visibility', 'visible');
+        })
+        .on('mouseout', function rectmouseout() {
+          tooltip.style('visibility', 'hidden');
         });
       }
     const theweek = d3
