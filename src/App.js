@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import logo from './logo.svg';
 import './App.css';
 import { barData, lineData, pieData} from './D3-Box/config/config'
-// import PieChart from './D3-Box/PieChart'
+import PieChart from './D3-Box/PieChart'
 import Tree from './D3-Box/Tree'
 import Treemap from './D3-Box/Treemap'
 import Partition from './D3-Box/Partition'
@@ -165,6 +165,7 @@ class App extends Component {
         { source: 4, target: 5, relation: '夫妻', value: 1 },
         { source: 0, target: 6, relation: '兄弟', value: 2 },
         { source: 4, target: 6, relation: '同学', value: 3 },
+        { source: 5, target: 6, relation: '同学', value: 3 },
       ]
     }
     const layout = {
@@ -183,17 +184,16 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
-        {/* <Line data={lineData} axis={axis} layout={layout} line={line} /> */}
-        {/* <LineChart data={lineData} layout={layout} /> */}
-        {/* <PieChart data={pieData} layout={layout}/> */}
-        {/* <BarChart data={barData} layout={layout}/> */}
+        <LineChart data={lineData} layout={layout} />
+        <PieChart data={pieData} layout={layout}/>
+        <BarChart data={barData} layout={layout}/>
         {/* <Tree data={a} layout={layout}/> */}
-        {/* <Pack data={a} layout={layout} /> */}
-        {/* <Treemap data={a} layout={layout} /> */}
-        {/* <Partition data={a} layout={layout} /> */}
-        {/* <PartitionSun data={a} layout={layout} /> */}
-        {/* <Chord data={chordata} layout={layout} /> */}
-        {/* <Force data={forcedata} layout={layout} /> */}
+        <Pack data={a} layout={layout} />
+        <Treemap data={a} layout={layout} />
+        <Partition data={a} layout={layout} />
+        <PartitionSun data={a} layout={layout} />
+        <Chord data={chordata} layout={layout} />
+        <Force data={forcedata} layout={layout} />
         <Heatmap />
       </div>
     );
