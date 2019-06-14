@@ -51,7 +51,7 @@ nodes
   .style('fill', "#a2a2a2")
   .style("stroke", "none")
   .style("font-size", function (d) {
-    console.log(d)
+    // console.log(d)
     return d.r*3/5
   })
   .text(function(d) {

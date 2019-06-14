@@ -37,7 +37,7 @@ class Tree extends Component {
 
   //也就是传入数据,并得到绘制树基本数据
   var treeData = tree(hierarchyData);
-  console.log(treeData);
+  // console.log(treeData);
   //得到节点
   var nodes = treeData.descendants();
   var links = treeData.links();

@@ -44,7 +44,7 @@ nodes
 .attr('height', function(d) { return d.y1 - d.y0; })
 .style("stroke", "black")
   .style('fill', function (d) {
-    console.log(d)
+    // console.log(d)
     return color(d.depth)
   })
 

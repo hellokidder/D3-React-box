@@ -41,7 +41,7 @@ class PartitionSun extends Component {
   .data(root.descendants())
   .enter()
 
-    console.log(root.descendants())
+    // console.log(root.descendants())
   nodes.append('path')
   // .attr('transform', function (d) { return `translate(${height/2}, ${width/2})` })
   .attr("d",arcGenerator)

@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 function Heatmap({ data }) {
 
   useEffect(() => {
-    console.log('heatmapdata', data);
+    // console.log('heatmapdata', data);
     const width = 900
     const height = 400
     const padding = { top: 45, left: 20, right: 20, bottom: 40 };

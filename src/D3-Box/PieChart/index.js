@@ -10,7 +10,7 @@ class PieChart extends Component {
     const height = layout.height ? layout.height : 500;
     const legend = layout.legend ? layout.legend : false
 
-    console.log(data)
+    // console.log(data)
     for (let i = 0; i < data.length; i += 1) {
       data[i].color = color[i]
       data[i].click = false

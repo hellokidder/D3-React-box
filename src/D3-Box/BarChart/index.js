@@ -15,6 +15,7 @@ class BarChart extends Component {
     const barwidth = layout.barwidth?layout.barwidth:"default"
 
 
+    // console.log("bardata",data)
     const svg = d3.select("#barsvg")
     .attr("width", width)
     .attr("height",height)
@@ -128,7 +129,8 @@ class BarChart extends Component {
           .range([0, data.length])
         const count = Math.floor(scale(m[0] - padding.left))
         svg.selectAll(`.back`)
-        .style("opacity", 0)
+          .style("opacity", 0)
+        console.log(`rect#back${data[count].name}`)
         svg.select(`rect#back${data[count].name}`)
           .style("opacity", 1)
 

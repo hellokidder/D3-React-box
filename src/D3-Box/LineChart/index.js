@@ -562,7 +562,7 @@ class LineChart extends Component {
     return tooltipLine
   }
   drawLine = (linedata, svg, lineGengeator, padding) => {
-    console.log(linedata.data)
+    // console.log(linedata.data)
     svg.append("path")
       .attr("id", linedata.name)
       .style("fill", "none")
