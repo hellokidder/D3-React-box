@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 
 function Heatmap({ data }) {
@@ -187,7 +187,7 @@ function Heatmap({ data }) {
         .attr('y', -10)
     }
 
-    const colorScale = d3.scaleThreshold()
+    d3.scaleThreshold()
       .domain([0, 50, 100])
       .range(color);
     legend.append("text")

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
 import logo from './logo.svg';
 import './App.css';
 import { barData, lineData, pieData} from './D3-Box/config/config'
 import PieChart from './D3-Box/PieChart'
-import Tree from './D3-Box/Tree'
+// import Tree from './D3-Box/Tree'
 import Treemap from './D3-Box/Treemap'
 import Partition from './D3-Box/Partition'
 import PartitionSun from './D3-Box/PartitionSun'
