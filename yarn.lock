@@ -6715,7 +6715,7 @@ lodash.tail@^4.1.1:
   integrity sha1-0jM6NtnncXyK0vfKyv7HwytERmQ=
 
 lodash.template@^4.2.4, lodash.template@^4.4.0:
-  version "4.4.0"
+  version "4.5.0"
   resolved "http://registry.npm.taobao.org/lodash.template/download/lodash.template-4.4.0.tgz#e73a0385c8355591746e020b99679c690e68fba0"
   integrity sha1-5zoDhcg1VZF0bgILmWecaQ5o+6A=
   dependencies:
@@ -8077,7 +8077,7 @@ postcss-initial@^3.0.0:
   resolved "http://registry.npm.taobao.org/postcss-initial/download/postcss-initial-3.0.0.tgz#1772512faf11421b791fb2ca6879df5f68aa0517"
   integrity sha1-F3JRL68RQht5H7LKaHnfX2iqBRc=
   dependencies:
-    lodash.template "^4.2.4"
+    lodash.template "^4.5.0"
     postcss "^7.0.2"
 
 postcss-lab-function@^2.0.1:
@@ -10832,7 +10832,7 @@ workbox-build@^3.6.3:
     fs-extra "^4.0.2"
     glob "^7.1.2"
     joi "^11.1.1"
-    lodash.template "^4.4.0"
+    lodash.template "^4.5.0"
     pretty-bytes "^4.0.2"
     stringify-object "^3.2.2"
     strip-comments "^1.0.2"
