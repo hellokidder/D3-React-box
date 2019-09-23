@@ -4,7 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 import { barData, lineData, pieData} from './D3-Box/config/config'
 import PieChart from './D3-Box/PieChart'
-// import Tree from './D3-Box/Tree'
+import Tree from './D3-Box/Tree'
 import Treemap from './D3-Box/Treemap'
 import Partition from './D3-Box/Partition'
 import PartitionSun from './D3-Box/PartitionSun'
@@ -16,6 +16,9 @@ import Pack from './D3-Box/Pack'
 import Chord from './D3-Box/Chord'
 import Force from './D3-Box/Force'
 import Heatmap from './D3-Box/Git-heatmap'
+import TuopuChart from './D3-Box/Tuopu'
+import TreeDrag from './D3-Box/TreeDrag'
+import Tat from './D3-Box/T'
 class App extends Component {
 
   render() {
@@ -107,6 +110,40 @@ class App extends Component {
      }
     ]
    }
+
+   const t = {
+    "name": "A",
+   "children": [
+    {
+     "name": "B",
+     "children": [
+      {
+       "name": "C","value":1500
+      },
+      {
+       "name": "H","value":1500
+      },
+      {
+       "name": "N","value":1500
+      }
+     ]
+    },
+    {
+     "name": "AL",
+     "children": [
+      {
+       "name": "AM","value":1500
+      },
+      {"name": "AS", "value": 1759},
+      {"name": "AT", "value": 2165},
+      {"name": "AU", "value": 5686},
+      {"name": "AV", "value": 3331},
+      {"name": "AW", "value": 7172},
+      {"name": "AX", "value": 3322}
+     ]
+    }
+   ]
+  }
     // const b= {
     //   "name": "A1",
     //   "children": [
@@ -173,21 +210,25 @@ class App extends Component {
       height: 400,
       tooltip: true,
       // tooltipline: true,
-      // slider:true,
+      slider:true,
       legend:true,
       // curve: false,//将折线转化成条柔和的曲线
       barwidth: 100,
       // layout:"cluster",//"tree"
+      layout: "tree"
     }
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
+        <Tree data={t} layout={layout}/>
+        <TreeDrag data={t} layout={layout}/>
+        <TuopuChart />
+        <Tat data={t} />
         <LineChart data={lineData} layout={layout} />
         <PieChart data={pieData} layout={layout}/>
         <BarChart data={barData} layout={layout}/>
-        {/* <Tree data={a} layout={layout}/> */}
         <Pack data={a} layout={layout} />
         <Treemap data={a} layout={layout} />
         <Partition data={a} layout={layout} />

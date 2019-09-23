@@ -23,6 +23,10 @@ class Tree extends Component {
       return d.value;
     });
 
+
+    // console.log(">>>>>>>>>>>>>>>>>>>",hierarchyData);
+    // console.log("<<<<<<<<<<<<<<<");
+
   //创建一个树状图
     let tree = {}
     if (layout.layout === "tree") {
@@ -83,7 +87,8 @@ class Tree extends Component {
       var cx = d.x;
       var cy= d.y;
       return `translate(${cy},${cx})`;
-    });
+    })
+
   //绘制节点
   gs.append("circle")
     .attr("r",6)
@@ -91,7 +96,25 @@ class Tree extends Component {
     .attr("stroke", function (d) {
       return d.children? "#F04864":"#1890FF"
     })
-    .attr("stroke-width",1);
+    .attr("stroke-width",1)
+
+    // .call(d3.drag()
+    // .on("start", dragstart)
+    // .on("drag", dragged));
+
+
+
+    // function dragstart(d) {
+    //   // if (!d3.event.active) {
+    //   //   force.alphaTarget(.1).restart();
+    //   // }
+    //   d.fx = d.x;
+    //   d.fy = d.y;
+    // }
+    // function dragged(d) {
+    //   d.fx = d3.event.x;
+    //   d.fy = d3.event.y;
+    // }
 
   //文字
   gs.append("text")
