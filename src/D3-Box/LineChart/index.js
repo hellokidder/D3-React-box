@@ -170,7 +170,7 @@ class LineChart extends Component {
     if (tooltiplineable) {
       tooltipLine = this.tooltipLine(pathheight)
     }
-  //   // tooltip***************************************************************************
+    // tooltip***************************************************************************
     let tooltip = {}
     if (tooltipable) {
       tooltip = this.setTooltip(lineData)

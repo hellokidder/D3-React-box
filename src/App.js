@@ -8,6 +8,7 @@ import Tree from './D3-Box/Tree'
 import Treemap from './D3-Box/Treemap'
 import Partition from './D3-Box/Partition'
 import PartitionSun from './D3-Box/PartitionSun'
+import D3text from './D3-Box/D3'
 // import {testCsvData} from './D3-Box/utils/utils'
 // import Line from './D3-Box/Line'
 import LineChart from './D3-Box/LineChart'
@@ -222,6 +223,7 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
+        <D3text />
         <Tree data={t} layout={layout}/>
         <TreeDrag data={t} layout={layout}/>
         <TuopuChart />
