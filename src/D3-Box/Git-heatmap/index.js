@@ -92,40 +92,40 @@ function Heatmap({ data }) {
           const tmp = dataArr.join('-');
           return `rect${tmp}`;
         })
-        .on('mouseover', function rectmousein() {
-          const id = this.getAttribute('id')
-            .split('rect')[1]
-            .split('-');
-          if (id[1].length === 1) {
-            id[1] = `0${id[1]}`;
-          }
-          if (id[2].length === 1) {
-            id[2] = `0${id[2]}`;
-          }
-          const selectdate = id.join('-');
-          let tooltiptext = `${selectdate}: 0 count`;
-          for (let n = 0; n < data.length; n += 1) {
-            if (selectdate === data[n].date) {
-              tooltiptext = `${selectdate} : ${data[n].count} count`;
-            }
-          }
-          const transX = this.getAttribute('x');
-          const transY = this.getAttribute('y');
-          const tool = document.getElementById(`heatmap-tooltip`);
-          tooltip
-            .text(tooltiptext)
-            .style(
-              'top',
-              `${Number(transY) + (16 + 16 + 24 + 24) + padding.top - tool.offsetHeight - 10}px`
-            );
-          if (Number(transX) + tool.offsetWidth / 2 + 20 < width) {
-            tooltip.style('left', `${Number(transX)}px`);
-          }
-          tooltip.style('visibility', 'visible');
-        })
-        .on('mouseout', function rectmouseout() {
-          tooltip.style('visibility', 'hidden');
-        });
+        // .on('mouseover', function rectmousein() {
+        //   const id = this.getAttribute('id')
+        //     .split('rect')[1]
+        //     .split('-');
+        //   if (id[1].length === 1) {
+        //     id[1] = `0${id[1]}`;
+        //   }
+        //   if (id[2].length === 1) {
+        //     id[2] = `0${id[2]}`;
+        //   }
+        //   const selectdate = id.join('-');
+        //   let tooltiptext = `${selectdate}: 0 count`;
+        //   for (let n = 0; n < data.length; n += 1) {
+        //     if (selectdate === data[n].date) {
+        //       tooltiptext = `${selectdate} : ${data[n].count} count`;
+        //     }
+        //   }
+        //   const transX = this.getAttribute('x');
+        //   const transY = this.getAttribute('y');
+        //   const tool = document.getElementById(`heatmap-tooltip`);
+        //   tooltip
+        //     .text(tooltiptext)
+        //     .style(
+        //       'top',
+        //       `${Number(transY) + (16 + 16 + 24 + 24) + padding.top - tool.offsetHeight - 10}px`
+        //     );
+        //   if (Number(transX) + tool.offsetWidth / 2 + 20 < width) {
+        //     tooltip.style('left', `${Number(transX)}px`);
+        //   }
+        //   tooltip.style('visibility', 'visible');
+        // })
+        // .on('mouseout', function rectmouseout() {
+        //   tooltip.style('visibility', 'hidden');
+        // });
       }
     const theweek = d3
       .select('#heatmapsvg')

@@ -9,6 +9,7 @@ import Treemap from './D3-Box/Treemap'
 import Partition from './D3-Box/Partition'
 import PartitionSun from './D3-Box/PartitionSun'
 import D3text from './D3-Box/D3'
+import GeoChart from './D3-Box/Geo'
 // import {testCsvData} from './D3-Box/utils/utils'
 // import Line from './D3-Box/Line'
 import LineChart from './D3-Box/LineChart'
@@ -223,11 +224,11 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
-        <D3text />
-        <Tree data={t} layout={layout}/>
+        {/* <D3text /> */}
+        {/* <Tree data={t} layout={layout}/> */}
         <TreeDrag data={t} layout={layout}/>
-        <TuopuChart />
-        <Tat data={t} />
+        {/* <TuopuChart /> */}
+        {/* <Tat data={t} /> */}
         <LineChart data={lineData} layout={layout} />
         <PieChart data={pieData} layout={layout}/>
         <BarChart data={barData} layout={layout}/>
@@ -237,6 +238,7 @@ class App extends Component {
         <PartitionSun data={a} layout={layout} />
         <Chord data={chordata} layout={layout} />
         <Force data={forcedata} layout={layout} />
+        <GeoChart />
         <Heatmap />
       </div>
     );
